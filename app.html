@@ -1247,14 +1247,14 @@
         return;
       }
       toast('Deploying…');
-      setTimeout(function () { window.location.href = 'play-single.html'; }, 500);
+      setTimeout(function () { window.location.href = 'play.html'; }, 500);
     });
     var endless = $('endlessBtn');
     if (endless) endless.addEventListener('click', function () {
       state.op.settings.mode = 'endless';
       persist();
       toast('Entering Endless Loop…');
-      setTimeout(function () { window.location.href = 'play-single.html'; }, 500);
+      setTimeout(function () { window.location.href = 'play-.html'; }, 500);
     });
     qsa('.slot').forEach(function (s) {
       s.addEventListener('click', function () {
