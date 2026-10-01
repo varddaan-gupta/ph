@@ -4,18 +4,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Safehouse — Predators Horizon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --blood: #8b1a1a;
+    --blood-hot: #ff3a3a;
+    --blood-glow: #ff5a5a;
+    --void: #050505;
+    --void-2: #0a0a0b;
+    --iron: #1a1616;
+    --iron-2: #242020;
+    --iron-3: #2e2929;
+    --bone: #e8e4dc;
+    --bone-dim: #b8b2a8;
+    --ash: #6b6b73;
+    --ok: #4ade80;
+  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
     width: 100%; height: 100%;
-    background: #050505;
-    color: #e8e4dc;
+    background: var(--void);
+    color: var(--bone);
     font-family: 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
     font-weight: 600;
     overflow: hidden;
   }
+  button { font-family: inherit; font-weight: 700; cursor: pointer; border: none; background: none; color: inherit; }
 
-  /* ═══════════ LAYOUT ═══════════ */
+  /* ═══════════════ LAYOUT ═══════════════ */
   .hub {
     position: fixed;
     inset: 0;
@@ -28,7 +46,7 @@
     background:
       radial-gradient(ellipse at 30% 20%, rgba(139,26,26,0.10), transparent 55%),
       radial-gradient(ellipse at 80% 90%, rgba(74,13,13,0.08), transparent 50%),
-      #050505;
+      var(--void);
   }
   .hub::before {
     content: '';
@@ -44,7 +62,7 @@
     opacity: 0.6;
   }
 
-  /* ═══════════ TOPBAR ═══════════ */
+  /* ═══════════════ TOPBAR ═══════════════ */
   .topbar {
     grid-area: topbar;
     display: flex;
@@ -53,104 +71,69 @@
     padding: 0 24px;
     background: linear-gradient(180deg, rgba(5,5,5,0.92), rgba(5,5,5,0.6));
     backdrop-filter: blur(14px);
-    border-bottom: 1px solid #2a2422;
+    border-bottom: 1px solid var(--iron-3);
     z-index: 10;
   }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .brand img {
-    height: 40px;
-    mix-blend-mode: screen;
-  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand img { height: 40px; mix-blend-mode: screen; }
   .brand-name {
     display: none;
-    font-family: 'Orbitron', 'Segoe UI', sans-serif;
+    font-family: 'Orbitron', sans-serif;
     font-size: 11px;
     font-weight: 900;
     letter-spacing: 0.16em;
     text-transform: uppercase;
   }
   @media (min-width: 720px) { .brand-name { display: block; } }
-  .status {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
+  .status { display: flex; align-items: center; gap: 20px; }
   .stat {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: monospace;
-    font-size: 13px;
-    font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 700;
   }
-  .stat svg {
-    width: 18px; height: 18px;
-    color: #ff3a3a;
-    flex-shrink: 0;
-  }
+  .stat svg { width: 18px; height: 18px; color: var(--blood-hot); }
   .stat-label {
-    font-size: 9px;
-    letter-spacing: 0.16em;
-    color: #6b6b73;
-    text-transform: uppercase;
+    font-size: 9px; letter-spacing: 0.16em;
+    color: var(--ash); text-transform: uppercase;
   }
-  .stat-value { color: #e8e4dc; }
+  .stat-value { color: var(--bone); }
   .xp {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    display: flex; align-items: center; gap: 12px;
     padding: 4px 12px 4px 4px;
     background: rgba(10,10,11,0.6);
-    border: 1px solid #2a2422;
+    border: 1px solid var(--iron-3);
     border-radius: 999px;
   }
-  .xp-ring {
-    position: relative;
-    width: 36px; height: 36px;
-  }
+  .xp-ring { position: relative; width: 36px; height: 36px; }
   .xp-ring svg { transform: rotate(-90deg); }
-  .xp-ring circle {
-    fill: none;
-    stroke-width: 3;
-    stroke-linecap: round;
-  }
-  .xp-ring .bg { stroke: #2e2929; }
+  .xp-ring circle { fill: none; stroke-width: 3; stroke-linecap: round; }
+  .xp-ring .bg { stroke: var(--iron-3); }
   .xp-ring .fg {
-    stroke: #ff3a3a;
+    stroke: var(--blood-hot);
     stroke-dasharray: 100;
     stroke-dashoffset: 100;
-    filter: drop-shadow(0 0 6px #ff3a3a);
+    filter: drop-shadow(0 0 6px var(--blood-hot));
     transition: stroke-dashoffset 0.5s;
   }
   .xp-level {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
+    position: absolute; inset: 0;
+    display: grid; place-items: center;
     font-family: 'Orbitron', sans-serif;
-    font-size: 11px;
-    font-weight: 900;
-    color: #ff3a3a;
+    font-size: 11px; font-weight: 900;
+    color: var(--blood-hot);
   }
   .xp-meta { line-height: 1.2; }
   .xp-name {
     font-family: 'Orbitron', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase;
   }
   .xp-sub {
-    font-family: monospace;
-    font-size: 10px;
-    color: #6b6b73;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: var(--ash);
   }
 
-  /* ═══════════ SIDEBAR ═══════════ */
+  /* ═══════════════ SIDEBAR ═══════════════ */
   .sidebar {
     grid-area: sidebar;
     display: flex;
@@ -160,47 +143,33 @@
     gap: 8px;
     background: linear-gradient(180deg, rgba(5,5,5,0.9), rgba(10,10,11,0.7));
     backdrop-filter: blur(14px);
-    border-right: 1px solid #2a2422;
+    border-right: 1px solid var(--iron-3);
     z-index: 10;
   }
   .room-btn {
     position: relative;
     width: 60px; height: 60px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
     gap: 3px;
     border-radius: 5px;
-    color: #6b6b73;
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: all 0.24s;
-    font-family: inherit;
-  }
-  .room-btn svg {
-    width: 24px; height: 24px;
+    color: var(--ash);
     transition: all 0.24s;
   }
+  .room-btn svg { width: 24px; height: 24px; transition: all 0.24s; }
   .room-btn-label {
     font-family: 'Orbitron', sans-serif;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: 8px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
   }
-  .room-btn:hover {
-    color: #e8e4dc;
-    background: rgba(139,26,26,0.08);
-  }
-  .room-btn:hover svg { stroke: #ff3a3a; }
+  .room-btn:hover { color: var(--bone); background: rgba(139,26,26,0.08); }
+  .room-btn:hover svg { stroke: var(--blood-hot); }
   .room-btn.active {
-    color: #ff3a3a;
+    color: var(--blood-hot);
     background: linear-gradient(180deg, rgba(139,26,26,0.18), rgba(74,13,13,0.10));
   }
   .room-btn.active svg {
-    stroke: #ff3a3a;
+    stroke: var(--blood-hot);
     filter: drop-shadow(0 0 8px rgba(255,58,58,0.6));
   }
   .room-btn.active::before {
@@ -208,21 +177,18 @@
     position: absolute;
     left: 0; top: 20%; bottom: 20%;
     width: 3px;
-    background: #ff3a3a;
+    background: var(--blood-hot);
     border-radius: 0 3px 3px 0;
-    box-shadow: 0 0 12px #ff3a3a;
+    box-shadow: 0 0 12px var(--blood-hot);
   }
   .sidebar-footer {
     margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding-top: 16px;
-    border-top: 1px solid #2a2422;
+    display: flex; flex-direction: column; gap: 8px;
+    padding-top: 16px; border-top: 1px solid var(--iron-3);
     width: 60%;
   }
 
-  /* ═══════════ MAIN ═══════════ */
+  /* ═══════════════ MAIN ═══════════════ */
   .main {
     grid-area: main;
     overflow-y: auto;
@@ -230,8 +196,8 @@
     position: relative;
   }
   .main::-webkit-scrollbar { width: 10px; }
-  .main::-webkit-scrollbar-track { background: #0a0a0b; }
-  .main::-webkit-scrollbar-thumb { background: #242020; border-radius: 999px; }
+  .main::-webkit-scrollbar-track { background: var(--void-2); }
+  .main::-webkit-scrollbar-thumb { background: var(--iron-2); border-radius: 999px; }
 
   .room { display: none; }
   .room.active { display: block; animation: roomIn 0.42s ease both; }
@@ -241,13 +207,10 @@
   }
 
   .room-head {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 24px;
-    margin-bottom: 32px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 24px; margin-bottom: 24px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #2a2422;
+    border-bottom: 1px solid var(--iron-3);
     position: relative;
   }
   .room-head::after {
@@ -255,16 +218,14 @@
     position: absolute;
     left: 0; bottom: -1px;
     width: 84px; height: 2px;
-    background: #ff3a3a;
-    box-shadow: 0 0 12px #ff3a3a;
+    background: var(--blood-hot);
+    box-shadow: 0 0 12px var(--blood-hot);
   }
   .room-kicker {
     font-family: 'Orbitron', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: #ff3a3a;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--blood-hot);
     margin-bottom: 8px;
     text-shadow: 0 0 20px rgba(255,58,58,0.4);
   }
@@ -272,19 +233,381 @@
     font-family: 'Orbitron', sans-serif;
     font-size: clamp(24px, 3vw, 36px);
     font-weight: 900;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    letter-spacing: 0.16em; text-transform: uppercase;
     line-height: 1.1;
   }
-  .room-sub {
-    font-size: 15px;
-    color: #b8b2a8;
-    margin-top: 8px;
-    max-width: 640px;
-    line-height: 1.6;
+
+  /* ═══════════════ CAROUSEL ═══════════════ */
+  .carousel-wrap {
+    position: relative;
+    height: calc(100vh - 220px);
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    perspective: 1400px;
+    overflow: hidden;
   }
 
-  /* ═══════════ DOOR ROOM ═══════════ */
+  /* Stage: the shelf the items sit on */
+  .carousel-stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform-style: preserve-3d;
+  }
+
+  /* Item: absolute positioned so we can slide / scale each one */
+  .c-item {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 380px;
+    height: 520px;
+    transform-style: preserve-3d;
+    transform-origin: center center;
+    /* Position + scale set inline by JS on every render */
+    transition:
+      transform 0.55s cubic-bezier(0.2, 0.9, 0.2, 1),
+      opacity 0.45s ease,
+      filter 0.45s ease;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+  .c-item.is-active { pointer-events: auto; }
+  .c-item.is-clickable { pointer-events: auto; cursor: pointer; }
+
+  /* The card itself */
+  .c-card {
+    position: relative;
+    width: 100%; height: 100%;
+    background: linear-gradient(160deg, #1a1616, #0a0a0b);
+    border: 1px solid var(--iron-3);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .c-item.is-active .c-card {
+    border-color: var(--blood-hot);
+    box-shadow:
+      0 0 40px rgba(255,58,58,0.35),
+      0 20px 60px rgba(0,0,0,0.7);
+  }
+
+  /* Top scan lines + corner accents */
+  .c-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,58,58,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,58,58,0.05) 1px, transparent 1px);
+    background-size: 30px 30px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+    pointer-events: none;
+  }
+
+  /* Item name ribbon */
+  .c-ribbon {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 10px 14px;
+    background: linear-gradient(180deg, rgba(5,5,5,0.9), rgba(5,5,5,0));
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 3;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .c-ribbon .tier {
+    color: var(--blood-hot);
+    padding: 3px 8px;
+    border: 1px solid var(--blood);
+    border-radius: 3px;
+    background: rgba(139,26,26,0.15);
+  }
+  .c-ribbon .key-hint {
+    color: var(--ash);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* SVG area for the item art */
+  .c-art {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .c-art svg {
+    width: 78%;
+    height: 78%;
+    transition: transform 0.55s cubic-bezier(0.2, 0.9, 0.2, 1);
+  }
+  .c-item.is-active .c-art svg {
+    transform: scale(1.06);
+  }
+  /* Soft accent glow behind the art */
+  .c-art::before {
+    content: '';
+    position: absolute;
+    width: 70%; height: 70%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, var(--accent, var(--blood)) 0%, transparent 70%);
+    opacity: 0.16;
+    filter: blur(30px);
+    pointer-events: none;
+  }
+
+  /* Bottom info block */
+  .c-info {
+    padding: 16px 20px 20px;
+    background: linear-gradient(180deg, transparent, rgba(5,5,5,0.85));
+    border-top: 1px solid var(--iron-3);
+    position: relative;
+  }
+  .c-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bone);
+    margin-bottom: 6px;
+    line-height: 1.1;
+  }
+  .c-stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+  .c-stats span {
+    color: var(--ash);
+    text-transform: uppercase;
+  }
+  .c-stats strong {
+    color: var(--bone);
+    font-weight: 700;
+  }
+  .c-desc {
+    font-size: 12px;
+    color: var(--bone-dim);
+    line-height: 1.5;
+    min-height: 32px;
+  }
+
+  /* Locked overlay for unowned items */
+  .c-item.is-locked .c-card::after {
+    content: 'LOCKED';
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 0.4em;
+    color: rgba(255,58,58,0.35);
+    text-shadow: 0 0 20px rgba(255,58,58,0.4);
+    z-index: 4;
+    pointer-events: none;
+  }
+  .c-item.is-locked .c-card {
+    filter: saturate(0.55);
+  }
+
+  /* Equipped badge */
+  .c-item.is-equipped .c-card::before {
+    /* keep grid background; the badge is separate */
+  }
+  .c-equipped-badge {
+    position: absolute;
+    top: 44px;
+    right: 12px;
+    padding: 4px 10px;
+    background: var(--blood-hot);
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    border-radius: 3px;
+    box-shadow: 0 0 16px rgba(255,58,58,0.8);
+    z-index: 5;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.7; }
+  }
+
+  /* Arrow buttons */
+  .c-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: rgba(5,5,5,0.85);
+    border: 1.5px solid var(--iron-3);
+    color: var(--bone-dim);
+    display: grid;
+    place-items: center;
+    z-index: 10;
+    transition: all 0.24s;
+    backdrop-filter: blur(10px);
+  }
+  .c-arrow svg { width: 22px; height: 22px; }
+  .c-arrow:hover {
+    border-color: var(--blood-hot);
+    color: var(--blood-hot);
+    box-shadow: 0 0 24px rgba(255,58,58,0.5);
+    transform: translateY(-50%) scale(1.06);
+  }
+  .c-arrow:active { transform: translateY(-50%) scale(0.96); }
+  .c-arrow.left  { left: 24px; }
+  .c-arrow.right { right: 24px; }
+  .c-arrow:disabled { opacity: 0.25; cursor: not-allowed; }
+  .c-arrow:disabled:hover {
+    border-color: var(--iron-3); color: var(--bone-dim);
+    box-shadow: none; transform: translateY(-50%);
+  }
+
+  /* Dots / index strip */
+  .c-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+    max-width: 640px;
+  }
+  .c-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--iron-3);
+    cursor: pointer;
+    transition: all 0.24s;
+  }
+  .c-dot:hover { background: var(--blood); }
+  .c-dot.is-active {
+    background: var(--blood-hot);
+    box-shadow: 0 0 10px var(--blood-hot);
+    width: 20px; border-radius: 3px;
+  }
+  .c-dot.is-owned { background: rgba(74,222,128,0.4); }
+  .c-dot.is-owned:hover { background: var(--ok); }
+  .c-dot.is-owned.is-active { background: var(--blood-hot); }
+
+  /* Action bar below the carousel */
+  .c-actionbar {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .c-actionbar .price {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(5,5,5,0.6);
+    border: 1px solid var(--iron-3);
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--bone);
+  }
+  .c-actionbar .price.poor { color: var(--blood-hot); }
+  .c-actionbar .price.owned { color: var(--ok); }
+
+  /* Slot picker strip (arsenal only) */
+  .slot-strip {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .slot-chip {
+    min-width: 44px;
+    padding: 8px 12px;
+    background: rgba(5,5,5,0.6);
+    border: 1px solid var(--iron-3);
+    border-radius: 3px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--bone-dim);
+    letter-spacing: 0.08em;
+    transition: all 0.2s;
+  }
+  .slot-chip:hover { border-color: var(--blood); color: var(--bone); }
+  .slot-chip.is-active {
+    background: linear-gradient(180deg, var(--blood), #4a0d0d);
+    border-color: var(--blood-hot);
+    color: #fff;
+    box-shadow: 0 0 16px rgba(255,58,58,0.5);
+  }
+
+  /* ═══════════════ GENERIC BUTTONS ═══════════════ */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    border: 1.5px solid var(--blood-hot);
+    background: linear-gradient(180deg, var(--blood), #4a0d0d);
+    color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 0 24px rgba(255,58,58,0.4);
+    transition: all 0.24s;
+    text-decoration: none;
+  }
+  .btn:hover {
+    background: linear-gradient(180deg, var(--blood-hot), var(--blood));
+    transform: translateY(-1px);
+    box-shadow: 0 0 32px rgba(255,58,58,0.7);
+  }
+  .btn.lg { padding: 16px 40px; font-size: 14px; }
+  .btn.ghost {
+    background: transparent;
+    border-color: var(--iron-3);
+    color: var(--bone-dim);
+    box-shadow: none;
+  }
+  .btn.ghost:hover {
+    border-color: var(--blood-hot);
+    color: var(--bone);
+  }
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* ═══════════════ DOOR ROOM ═══════════════ */
   .door {
     display: grid;
     grid-template-columns: 1.4fr 1fr;
@@ -331,20 +654,16 @@
     font-weight: 700;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: #ff3a3a;
+    color: var(--blood-hot);
     margin-bottom: 20px;
   }
   .door-badge::before {
     content: '';
     width: 6px; height: 6px;
     border-radius: 50%;
-    background: #ff3a3a;
-    box-shadow: 0 0 10px #ff3a3a;
+    background: var(--blood-hot);
+    box-shadow: 0 0 10px var(--blood-hot);
     animation: pulse 1.8s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50%      { opacity: 0.4; transform: scale(0.8); }
   }
   .door-title {
     font-family: 'Orbitron', sans-serif;
@@ -355,20 +674,19 @@
     line-height: 1;
     margin-bottom: 16px;
   }
-  .door-title span { color: #ff3a3a; text-shadow: 0 0 40px rgba(255,58,58,0.6); }
+  .door-title span { color: var(--blood-hot); text-shadow: 0 0 40px rgba(255,58,58,0.6); }
   .door-lead {
     font-size: 15px;
-    color: #b8b2a8;
+    color: var(--bone-dim);
     line-height: 1.7;
     margin-bottom: 32px;
     max-width: 460px;
   }
   .door-cta { display: flex; gap: 12px; flex-wrap: wrap; }
 
-  /* ── Panels ── */
   .panel {
-    background: linear-gradient(160deg, #1a1616, #0a0a0b);
-    border: 1px solid #2a2422;
+    background: linear-gradient(160deg, var(--iron), var(--void-2));
+    border: 1px solid var(--iron-3);
     border-radius: 5px;
     padding: 20px;
   }
@@ -378,148 +696,12 @@
     font-weight: 700;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: #b8b2a8;
+    color: var(--bone-dim);
     margin-bottom: 16px;
     padding-bottom: 12px;
-    border-bottom: 1px solid #2a2422;
+    border-bottom: 1px solid var(--iron-3);
   }
 
-  /* ── Buttons ── */
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 24px;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    border: 1.5px solid #ff3a3a;
-    background: linear-gradient(180deg, #8b1a1a, #4a0d0d);
-    color: #fff;
-    border-radius: 3px;
-    cursor: pointer;
-    box-shadow: 0 0 24px rgba(255,58,58,0.4);
-    transition: all 0.24s;
-    text-decoration: none;
-  }
-  .btn:hover {
-    background: linear-gradient(180deg, #ff3a3a, #8b1a1a);
-    transform: translateY(-1px);
-    box-shadow: 0 0 32px rgba(255,58,58,0.7);
-  }
-  .btn.lg { padding: 16px 40px; font-size: 14px; }
-  .btn.sm { padding: 8px 16px; font-size: 10px; }
-  .btn.block { width: 100%; }
-  .btn.ghost {
-    background: transparent;
-    border-color: #2a2422;
-    color: #b8b2a8;
-    box-shadow: none;
-  }
-  .btn.ghost:hover {
-    border-color: #ff3a3a;
-    color: #e8e4dc;
-  }
-  .btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
-
-  /* ── Item grids ── */
-  .item-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-  }
-  .item-card {
-    position: relative;
-    background: linear-gradient(160deg, #1a1616, #0a0a0b);
-    border: 1px solid #2a2422;
-    border-radius: 5px;
-    padding: 16px;
-    transition: all 0.24s;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-height: 260px;
-  }
-  .item-card:hover {
-    border-color: #8b1a1a;
-    transform: translateY(-3px);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.5);
-  }
-  .item-card.locked { opacity: 0.65; }
-  .item-card.equipped {
-    border-color: #ff3a3a;
-    box-shadow: 0 0 24px rgba(255,58,58,0.25);
-  }
-  .item-card.equipped::after {
-    content: 'EQUIPPED';
-    position: absolute;
-    top: 8px; right: 8px;
-    padding: 3px 8px;
-    background: #ff3a3a;
-    color: #fff;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 8px;
-    font-weight: 900;
-    letter-spacing: 0.14em;
-    border-radius: 2px;
-    box-shadow: 0 0 12px rgba(255,58,58,0.7);
-  }
-  .item-icon {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: radial-gradient(circle at 50% 40%, rgba(139,26,26,0.15), transparent 70%), rgba(5,5,5,0.5);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .item-icon svg { width: 70%; height: 70%; }
-  .item-name {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    line-height: 1.2;
-  }
-  .item-desc {
-    font-size: 11px;
-    color: #6b6b73;
-    line-height: 1.5;
-    flex: 1;
-  }
-  .item-meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding-top: 12px;
-    border-top: 1px solid #2a2422;
-  }
-  .item-tier {
-    font-family: monospace;
-    font-size: 10px;
-    color: #6b6b73;
-    text-transform: uppercase;
-  }
-  .item-cost {
-    font-family: monospace;
-    font-size: 12px;
-    font-weight: 700;
-    color: #ff3a3a;
-  }
-  .item-cost.owned { color: #4ade80; }
-  .item-cost.poor { color: #ff3a3a; opacity: 0.5; }
-
-  /* ── Loadout slots ── */
   .slots {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -528,7 +710,7 @@
   .slot {
     aspect-ratio: 1;
     background: rgba(5,5,5,0.6);
-    border: 1px solid #2a2422;
+    border: 1px solid var(--iron-3);
     border-radius: 3px;
     position: relative;
     display: flex;
@@ -538,35 +720,45 @@
     transition: all 0.24s;
   }
   .slot:hover {
-    border-color: #8b1a1a;
+    border-color: var(--blood);
     background: rgba(139,26,26,0.08);
   }
   .slot.empty { border-style: dashed; }
   .slot.empty::after {
     content: '+';
     position: absolute;
-    font-family: monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 22px;
-    color: #2e2929;
+    color: var(--iron-3);
   }
   .slot-key {
     position: absolute;
     top: 3px; left: 5px;
-    font-family: monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
-    color: #6b6b73;
+    color: var(--ash);
     z-index: 2;
   }
   .slot svg { width: 70%; height: 70%; }
-  .slot.active {
-    border-color: #ff3a3a;
-    box-shadow: 0 0 20px rgba(255,58,58,0.35);
-  }
 
-  /* ── Profile / Terminal ── */
+  .avatar {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(5,5,5,0.6);
+    border: 2px solid var(--blood);
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 30px rgba(255,58,58,0.2);
+  }
+  .avatar svg { width: 90%; height: 90%; }
+
+  /* ═══════════════ PROFILE / TERMINAL ═══════════════ */
   .profile-card {
-    background: linear-gradient(160deg, #1a1616, #0a0a0b);
-    border: 1px solid #2a2422;
+    background: linear-gradient(160deg, var(--iron), var(--void-2));
+    border: 1px solid var(--iron-3);
     border-radius: 5px;
     padding: 24px;
     margin-bottom: 16px;
@@ -576,19 +768,6 @@
     align-items: center;
     gap: 20px;
   }
-  .avatar {
-    width: 100px; height: 100px;
-    border-radius: 50%;
-    background: rgba(5,5,5,0.6);
-    border: 2px solid #8b1a1a;
-    overflow: hidden;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 30px rgba(255,58,58,0.2);
-  }
-  .avatar svg { width: 90%; height: 90%; }
   .p-name {
     font-family: 'Orbitron', sans-serif;
     font-size: 24px;
@@ -600,11 +779,11 @@
   .tags { display: flex; gap: 8px; flex-wrap: wrap; }
   .tag {
     padding: 3px 10px;
-    border: 1px solid #2a2422;
+    border: 1px solid var(--iron-3);
     border-radius: 999px;
-    font-family: monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
-    color: #6b6b73;
+    color: var(--ash);
     text-transform: uppercase;
   }
   .tag.guest { border-color: #fbbf24; color: #fbbf24; }
@@ -618,29 +797,28 @@
   .term-row:last-child { border-bottom: none; }
   .term-label {
     font-size: 11px;
-    color: #6b6b73;
+    color: var(--ash);
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
   .term-value {
-    font-family: monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
     font-weight: 700;
-    color: #e8e4dc;
+    color: var(--bone);
   }
 
   .empty {
     padding: 40px 24px;
     text-align: center;
-    color: #6b6b73;
-    font-family: monospace;
+    color: var(--ash);
+    font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     text-transform: uppercase;
-    border: 1px dashed #2e2929;
+    border: 1px dashed var(--iron-3);
     border-radius: 5px;
   }
 
-  /* ── Toast ── */
   .toasts {
     position: fixed;
     bottom: 24px; right: 24px;
@@ -652,9 +830,9 @@
   }
   .toast {
     padding: 12px 20px;
-    background: linear-gradient(160deg, #242020, #0a0a0b);
+    background: linear-gradient(160deg, var(--iron-2), var(--void-2));
     border: 1px solid rgba(139,26,26,0.5);
-    border-left: 3px solid #ff3a3a;
+    border-left: 3px solid var(--blood-hot);
     border-radius: 3px;
     font-family: 'Orbitron', sans-serif;
     font-size: 11px;
@@ -669,26 +847,26 @@
     to   { opacity: 1; transform: translateX(0); }
   }
 
-  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .c-item { width: 300px; height: 440px; }
+    .c-name { font-size: 18px; }
+    .c-arrow { width: 44px; height: 44px; }
+    .c-arrow.left { left: 12px; }
+    .c-arrow.right { right: 12px; }
+  }
   @media (max-width: 720px) {
     .hub { grid-template-columns: 60px 1fr; }
     .main { padding: 20px 16px 48px; }
     .door-hero { padding: 24px; min-height: auto; }
-    .brand-name { display: none; }
+    .c-item { width: 260px; height: 400px; }
   }
-
-  /* ── Load Orbitron for the display font ── */
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap');
 </style>
 </head>
 <body>
 
 <div class="hub">
-
-  <!-- ═══════════ SIDEBAR ═══════════ -->
   <aside class="sidebar" id="sidebar"></aside>
 
-  <!-- ═══════════ TOPBAR ═══════════ -->
   <header class="topbar">
     <div class="brand">
       <img src="assets/logo/logo.svg" alt="">
@@ -721,26 +899,24 @@
     </div>
   </header>
 
-  <!-- ═══════════ MAIN ═══════════ -->
   <main class="main" id="main"></main>
-
 </div>
 
 <div class="toasts" id="toasts"></div>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   SELF-CONTAINED HUB — no external dependencies
+   PREDATORS HORIZON — HUB (single-file)
+   Carousel-based Arsenal / Locker / Map Room.
    ═══════════════════════════════════════════════════════════════ */
 
 (function () {
   'use strict';
 
-  /* ── Storage keys ── */
   var SAVE_KEY = 'predatorshorizon.save.v1';
   var SESSION_KEY = 'predatorshorizon.session.v1';
 
-  /* ── Utility ── */
+  /* ── Helpers ── */
   function $(id) { return document.getElementById(id); }
   function qsa(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
   function el(tag, cls, html) {
@@ -790,7 +966,7 @@
     try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
   }
 
-  /* ── Data tables (mirrors js/icons.js) ── */
+  /* ── Data ── */
   var WEAPONS = [
     { id: 0, name: 'Kinetic Rifle', shape: 'rifle', accent: '#ff3a3a', glyph: '◆', tier: 1, cost: 0, dps: 180, desc: 'Reliable. Free. Always loaded.' },
     { id: 1, name: 'Pulse SMG', shape: 'smg', accent: '#ff5a5a', glyph: '▦', tier: 1, cost: 400, dps: 163, desc: 'Rapid fire. Low damage per shot.' },
@@ -836,14 +1012,10 @@
     { id: 7, name: 'Void Trench', layout: 'trench', ground: '#080509', lines: '#ff5fa7', tier: 5, cost: 9000, desc: 'Deep space trench. Nothing below.' }
   ];
 
-  /* ═══════════════════════════════════════════════════════════════
-     PROCEDURAL SVG ICONS
-     ═══════════════════════════════════════════════════════════════ */
-
+  /* ═══════════════ PROCEDURAL SVG ═══════════════ */
   function svgWrap(size, content) {
-    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '" preserveAspectRatio="xMidYMid meet" aria-hidden="true">' + content + '</svg>';
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '" preserveAspectRatio="xMidYMid meet">' + content + '</svg>';
   }
-
   var weaponShapes = {
     rifle: function (a) {
       return '<rect x="14" y="42" width="72" height="12" rx="2" fill="#2a2422" stroke="' + a + '" stroke-width="1.2"/>' +
@@ -928,39 +1100,23 @@
         '<rect x="34" y="58" width="14" height="11" rx="1" fill="#1a1616" stroke="' + a + '" stroke-width="0.8"/>';
     }
   };
-
   var visorMap = {
     bar: function (a) { return '<rect x="38" y="30" width="24" height="4" rx="1" fill="' + a + '"/>'; },
     single: function (a) { return '<rect x="36" y="31" width="28" height="3" rx="1" fill="' + a + '"/>'; },
     slit: function (a) { return '<rect x="40" y="30" width="20" height="2.5" rx="1" fill="' + a + '"/>'; },
     star: function (a) { return '<path d="M50 26 L53 32 L59 32 L54 36 L56 42 L50 38 L44 42 L46 36 L41 32 L47 32 Z" fill="' + a + '"/>'; },
-    ghost: function (a) {
-      return '<rect x="38" y="30" width="24" height="4" rx="1" fill="' + a + '" opacity="0.55"/>' +
-        '<rect x="34" y="30" width="24" height="4" rx="1" fill="' + a + '" opacity="0.28"/>';
-    },
-    hollow: function (a) {
-      return '<circle cx="42" cy="32" r="2.5" fill="' + a + '" opacity="0.6"/>' +
-        '<circle cx="58" cy="32" r="2.5" fill="' + a + '" opacity="0.6"/>';
-    },
-    beak: function (a) {
-      return '<path d="M42 30 L58 30 L54 36 L46 36 Z" fill="' + a + '"/>' +
-        '<path d="M50 34 L52 40 L48 40 Z" fill="' + a + '" opacity="0.7"/>';
-    }
+    ghost: function (a) { return '<rect x="38" y="30" width="24" height="4" rx="1" fill="' + a + '" opacity="0.55"/><rect x="34" y="30" width="24" height="4" rx="1" fill="' + a + '" opacity="0.28"/>'; },
+    hollow: function (a) { return '<circle cx="42" cy="32" r="2.5" fill="' + a + '" opacity="0.6"/><circle cx="58" cy="32" r="2.5" fill="' + a + '" opacity="0.6"/>'; },
+    beak: function (a) { return '<path d="M42 30 L58 30 L54 36 L46 36 Z" fill="' + a + '"/><path d="M50 34 L52 40 L48 40 Z" fill="' + a + '" opacity="0.7"/>'; }
   };
-
   function weaponSvg(w) {
     var fn = weaponShapes[w.shape] || weaponShapes.rifle;
-    var body = fn(w.accent);
-    var glow = '<circle cx="50" cy="50" r="30" fill="' + w.accent + '" opacity="0.08"/>';
-    return svgWrap(100, glow + body);
+    return svgWrap(100, '<circle cx="50" cy="50" r="30" fill="' + w.accent + '" opacity="0.08"/>' + fn(w.accent));
   }
-
   function skinSvg(s) {
-    var torso =
-      '<path d="M22 100 L22 76 Q22 62 36 60 L44 58 L56 58 L64 60 Q78 62 78 76 L78 100 Z" fill="' + s.body + '" stroke="' + s.accent + '" stroke-width="1.2"/>' +
+    var torso = '<path d="M22 100 L22 76 Q22 62 36 60 L44 58 L56 58 L64 60 Q78 62 78 76 L78 100 Z" fill="' + s.body + '" stroke="' + s.accent + '" stroke-width="1.2"/>' +
       '<path d="M46 58 L46 52 L54 52 L54 58 Z" fill="' + s.body + '" stroke="' + s.accent + '" stroke-width="1"/>';
-    var helmet =
-      '<path d="M32 34 Q32 16 50 16 Q68 16 68 34 L68 44 Q68 52 50 52 Q32 52 32 44 Z" fill="' + s.body + '" stroke="' + s.accent + '" stroke-width="1.4"/>';
+    var helmet = '<path d="M32 34 Q32 16 50 16 Q68 16 68 34 L68 44 Q68 52 50 52 Q32 52 32 44 Z" fill="' + s.body + '" stroke="' + s.accent + '" stroke-width="1.4"/>';
     var extra = '';
     if (s.shape === 'heavy') {
       extra = '<path d="M14 100 L14 74 Q14 60 26 56 L34 54 L36 58 L24 76 L24 100 Z" fill="' + s.body + '" stroke="' + s.accent + '" stroke-width="1.2"/>' +
@@ -972,11 +1128,8 @@
       extra = '<path d="M30 60 Q22 62 20 74 L20 100 L34 100 L34 66 Z" fill="' + s.accent + '" opacity="0.18" stroke="' + s.accent + '" stroke-width="0.8"/>' +
         '<path d="M70 60 Q78 62 80 74 L80 100 L66 100 L66 66 Z" fill="' + s.accent + '" opacity="0.18" stroke="' + s.accent + '" stroke-width="0.8"/>';
     }
-    var visorFn = visorMap[s.visor] || visorMap.bar;
-    var glow = '<circle cx="50" cy="50" r="40" fill="' + s.accent + '" opacity="0.06"/>';
-    return svgWrap(100, glow + torso + helmet + extra + visorFn(s.accent));
+    return svgWrap(100, '<circle cx="50" cy="50" r="40" fill="' + s.accent + '" opacity="0.06"/>' + torso + helmet + extra + visorMap[s.visor](s.accent));
   }
-
   var terrainShapes = {
     grid: function (g, l) {
       var out = '<rect width="100" height="100" fill="' + g + '"/>';
@@ -1032,15 +1185,12 @@
       return out;
     }
   };
-
   function terrainSvg(t) {
     var fn = terrainShapes[t.layout] || terrainShapes.grid;
     return svgWrap(100, fn(t.ground, t.lines));
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     XP / LEVEL
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══════════════ XP / LEVEL ═══════════════ */
   function xpForLevel(level) {
     if (level <= 1) return 0;
     var total = 0, cost = 120;
@@ -1055,14 +1205,13 @@
     return { level: level, into: xp - floor, need: next - floor };
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     HUB STATE
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══════════════ STATE ═══════════════ */
   var state = {
     op: null,
     save: null,
     room: 'door',
-    selectedSlot: 0
+    selectedSlot: 0,
+    carouselIndex: { arsenal: 0, locker: 0, maps: 0 }
   };
 
   var ROOMS = [
@@ -1093,16 +1242,13 @@
     }, 2400);
   }
 
-  /* ── Persistence helper ── */
   function persist() {
     if (!state.save) return;
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(state.save)); }
-    catch (e) { toast('Could not save: ' + e.message); }
+    catch (e) { toast('Could not save'); }
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     TOPBAR
-     ═══════════════════════════════════════════════════════════════ */
+  /* ── Topbar ── */
   function refreshTopbar() {
     var op = state.op;
     if (!op) return;
@@ -1111,13 +1257,10 @@
     var lvl = levelInfo(op.xp);
     $('levelEl').textContent = lvl.level;
     $('xpSubEl').textContent = lvl.into + ' / ' + lvl.need + ' XP';
-    var pct = lvl.need ? lvl.into / lvl.need : 0;
-    $('xpRing').style.strokeDashoffset = String(100 - pct * 100);
+    $('xpRing').style.strokeDashoffset = String(100 - (lvl.need ? lvl.into / lvl.need : 0) * 100);
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     SIDEBAR
-     ═══════════════════════════════════════════════════════════════ */
+  /* ── Sidebar ── */
   function renderSidebar() {
     var sb = $('sidebar');
     sb.innerHTML = '';
@@ -1125,14 +1268,11 @@
       var btn = el('button', 'room-btn' + (room.id === state.room ? ' active' : ''));
       btn.title = room.title;
       btn.innerHTML =
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
-          room.icon +
-        '</svg>' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + room.icon + '</svg>' +
         '<span class="room-btn-label">' + room.label + '</span>';
       btn.addEventListener('click', function () { showRoom(room.id); });
       sb.appendChild(btn);
     });
-
     var footer = el('div', 'sidebar-footer');
     footer.innerHTML =
       '<button class="room-btn" title="Sign Out" id="signOutBtn">' +
@@ -1144,43 +1284,39 @@
     footer.querySelector('#signOutBtn').addEventListener('click', function () {
       if (!confirm('Sign out? Your progress is saved.')) return;
       clearSession();
-      window.location.href = 'login-single.html';
+      window.location.href = 'login-s.html';
     });
     sb.appendChild(footer);
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     ROOM NAVIGATION
-     ═══════════════════════════════════════════════════════════════ */
+  /* ── Room routing ── */
   function showRoom(id) {
-    var room = ROOMS.filter(function (r) { return r.id === id; })[0];
-    if (!room) return;
+    if (state.room !== id && state.carouselIndex[id] == null && (id === 'arsenal' || id === 'locker' || id === 'maps')) {
+      state.carouselIndex[id] = 0;
+    }
     state.room = id;
     renderSidebar();
-
     var main = $('main');
     main.style.opacity = '0';
     setTimeout(function () {
       main.innerHTML = renderRoom(id);
       wireRoom(id);
+      main.style.transition = 'opacity 0.24s';
       main.style.opacity = '1';
-      main.style.transition = 'opacity 0.2s';
     }, 60);
   }
 
   function renderRoom(id) {
-    if (id === 'door')     return renderDoor();
-    if (id === 'arsenal')  return renderArsenal();
-    if (id === 'locker')   return renderLocker();
-    if (id === 'maps')     return renderMaps();
+    if (id === 'door') return renderDoor();
+    if (id === 'arsenal') return renderCarouselRoom('arsenal');
+    if (id === 'locker') return renderCarouselRoom('locker');
+    if (id === 'maps') return renderCarouselRoom('maps');
     if (id === 'terminal') return renderTerminal();
-    if (id === 'mirror')   return renderMirror();
-    return '<div class="empty">Unknown room</div>';
+    if (id === 'mirror') return renderMirror();
+    return '';
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     ROOM: DOOR
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══════════════ DOOR ROOM ═══════════════ */
   function renderDoor() {
     var op = state.op;
     var loadout = op.loadout;
@@ -1195,7 +1331,6 @@
           (w ? weaponSvg(w) : '') +
         '</div>';
     }
-
     return '' +
       '<section class="room active">' +
         '<div class="door">' +
@@ -1203,10 +1338,7 @@
             '<div>' +
               '<div class="door-badge">Mission Ready</div>' +
               '<h2 class="door-title">Predator <span>01</span></h2>' +
-              '<p class="door-lead">' +
-                'The first breach. Learn the safehouse, learn the rhythm, ' +
-                'and get out alive. Everything after this is worse.' +
-              '</p>' +
+              '<p class="door-lead">The first breach. Learn the safehouse, learn the rhythm, and get out alive. Everything after this is worse.</p>' +
             '</div>' +
             '<div class="door-cta">' +
               '<button class="btn lg" id="playBtn">Deploy</button>' +
@@ -1221,7 +1353,7 @@
               '<div class="avatar" style="width:64px;height:64px;border-color:' + skin.accent + '">' + skinSvg(skin) + '</div>' +
               '<div>' +
                 '<div style="font-family:Orbitron,sans-serif;font-size:13px;letter-spacing:0.16em;text-transform:uppercase">' + esc(op.name) + '</div>' +
-                '<div style="font-family:monospace;font-size:11px;color:#6b6b73;margin-top:2px">' + skin.name + '</div>' +
+                '<div style="font-family:JetBrains Mono,monospace;font-size:11px;color:#6b6b73;margin-top:2px">' + skin.name + '</div>' +
               '</div>' +
             '</div>' +
           '</div>' +
@@ -1229,310 +1361,388 @@
       '</section>';
   }
 
-  function wireRoom(id) {
-    if (id === 'door') wireDoor();
-    else if (id === 'arsenal') wireArsenal();
-    else if (id === 'locker') wireLocker();
-    else if (id === 'maps') wireMaps();
-    else if (id === 'terminal') wireTerminal();
-    else if (id === 'mirror') wireMirror();
-  }
+  /* ═══════════════ CAROUSEL ROOM ═══════════════ */
+  function renderCarouselRoom(id) {
+    var cfg = getCarouselConfig(id);
+    var items = cfg.items;
+    var idx = state.carouselIndex[id] || 0;
+    var kicker = '', title = '', cta = '';
+    if (id === 'arsenal') { kicker = 'Weapon Systems'; title = 'The Arsenal'; }
+    if (id === 'locker') { kicker = 'Operator Skins'; title = 'The Locker'; }
+    if (id === 'maps') { kicker = 'Terrain Selection'; title = 'The Map Room'; }
 
-  function wireDoor() {
-    var play = $('playBtn');
-    if (play) play.addEventListener('click', function () {
-      if (!state.op.loadout.weapons.length) {
-        toast('Equip a weapon first');
-        showRoom('arsenal');
-        return;
+    var slotStrip = '';
+    if (id === 'arsenal') {
+      slotStrip = '<div class="slot-strip" id="slotStrip">';
+      for (var i = 0; i < 8; i++) {
+        var wid = state.op.loadout.weapons[i];
+        var w = wid != null ? WEAPONS[wid] : null;
+        slotStrip += '<button class="slot-chip' + (i === state.selectedSlot ? ' is-active' : '') + '" data-slot-pick="' + i + '">' +
+          (i + 1) + (w ? ' ' + w.glyph : '') +
+        '</button>';
       }
-      toast('Deploying…');
-      setTimeout(function () { window.location.href = 'play.html'; }, 500);
-    });
-    var endless = $('endlessBtn');
-    if (endless) endless.addEventListener('click', function () {
-      state.op.settings.mode = 'endless';
-      persist();
-      toast('Entering Endless Loop…');
-      setTimeout(function () { window.location.href = 'play-.html'; }, 500);
-    });
-    qsa('.slot').forEach(function (s) {
-      s.addEventListener('click', function () {
-        state.selectedSlot = parseInt(s.dataset.slot, 10) || 0;
-        showRoom('arsenal');
-      });
-    });
-  }
-
-  /* ═══════════════════════════════════════════════════════════════
-     ROOM: ARSENAL
-     ═══════════════════════════════════════════════════════════════ */
-  function renderArsenal() {
-    var op = state.op;
-    var selectedSlot = state.selectedSlot;
-    var chips = '<div style="display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap">';
-    for (var i = 0; i < 8; i++) {
-      var wid = op.loadout.weapons[i];
-      var w = wid != null ? WEAPONS[wid] : null;
-      var active = i === selectedSlot;
-      chips += '<button class="btn sm ' + (active ? '' : 'ghost') + '" data-slot-pick="' + i + '" style="min-width:44px;padding:6px 10px;font-size:11px">' +
-        (i + 1) + (w ? ' · ' + w.glyph : '') + '</button>';
+      slotStrip += '</div>';
     }
-    chips += '</div>';
-
-    var cards = WEAPONS.map(function (w) {
-      var owned = op.unlockedWeapons.indexOf(w.id) >= 0;
-      var equipped = op.loadout.weapons.indexOf(w.id) >= 0;
-      var canAfford = op.credits >= w.cost;
-      var cls = 'item-card' + (owned ? '' : ' locked') + (equipped ? ' equipped' : '');
-      var costCls = w.cost === 0 || owned ? 'owned' : (canAfford ? '' : 'poor');
-      var costText = w.cost === 0 ? 'FREE' : (owned ? 'OWNED' : fmtCoins(w.cost));
-      var action = '';
-      if (!owned) {
-        action = '<button class="btn sm block" data-action="unlock" data-wid="' + w.id + '"' + (canAfford ? '' : ' disabled') + '>Unlock</button>';
-      } else if (equipped) {
-        action = '<button class="btn sm block ghost" data-action="unequip" data-wid="' + w.id + '">Unequip</button>';
-      } else {
-        action = '<button class="btn sm block" data-action="equip" data-wid="' + w.id + '">Equip to Slot ' + (selectedSlot + 1) + '</button>';
-      }
-      return '<div class="' + cls + '">' +
-        '<div class="item-icon">' + weaponSvg(w) + '</div>' +
-        '<div class="item-name">' + esc(w.name) + '</div>' +
-        '<div class="item-desc">' + esc(w.desc) + '</div>' +
-        '<div class="item-meta">' +
-          '<span class="item-tier">Tier ' + w.tier + ' · ' + w.dps + ' DPS</span>' +
-          '<span class="item-cost ' + costCls + '">' + costText + '</span>' +
-        '</div>' +
-        action +
-      '</div>';
-    }).join('');
 
     return '' +
       '<section class="room active">' +
         '<div class="room-head">' +
           '<div>' +
-            '<div class="room-kicker">Weapon Systems</div>' +
-            '<h2 class="room-title">The Arsenal</h2>' +
-            '<p class="room-sub">Twelve weapons. Pick a slot, then a weapon.</p>' +
+            '<div class="room-kicker">' + kicker + '</div>' +
+            '<h2 class="room-title">' + title + '</h2>' +
           '</div>' +
         '</div>' +
-        '<div style="font-family:Orbitron,sans-serif;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#6b6b73;margin-bottom:12px">Assign to slot</div>' +
-        chips +
-        '<div class="item-grid">' + cards + '</div>' +
+        slotStrip +
+        '<div class="carousel-wrap" id="carousel" data-room="' + id + '">' +
+          '<button class="c-arrow left" id="cPrev" aria-label="Previous">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6 l-6 6 6 6"/></svg>' +
+          '</button>' +
+          '<div class="carousel-stage" id="cStage"></div>' +
+          '<button class="c-arrow right" id="cNext" aria-label="Next">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6 l6 6 -6 6"/></svg>' +
+          '</button>' +
+        '</div>' +
+        '<div class="c-dots" id="cDots"></div>' +
+        '<div class="c-actionbar" id="cAction"></div>' +
       '</section>';
   }
 
-  function wireArsenal() {
+  function getCarouselConfig(id) {
+    if (id === 'arsenal') {
+      return {
+        items: WEAPONS,
+        isOwned: function (w) { return state.op.unlockedWeapons.indexOf(w.id) >= 0; },
+        isEquipped: function (w) { return state.op.loadout.weapons.indexOf(w.id) >= 0; },
+        svg: weaponSvg,
+        priceLabel: function (w) { return w.cost === 0 ? 'FREE' : fmtCoins(w.cost); },
+        stats: function (w) { return '<span>TIER <strong>' + w.tier + '</strong></span><span>DPS <strong>' + w.dps + '</strong></span>'; },
+        onUnlock: function (w) {
+          if (state.op.credits < w.cost) { toast('Not enough credits'); return; }
+          state.op.credits -= w.cost;
+          state.op.unlockedWeapons.push(w.id);
+          persist(); refreshTopbar();
+          toast(w.name + ' unlocked');
+          rerenderCarousel('arsenal');
+        },
+        onEquip: function (w) {
+          var i = state.op.loadout.weapons.indexOf(w.id);
+          if (i >= 0) state.op.loadout.weapons.splice(i, 1);
+          state.op.loadout.weapons[state.selectedSlot] = w.id;
+          while (state.op.loadout.weapons.length && state.op.loadout.weapons[state.op.loadout.weapons.length - 1] == null) {
+            state.op.loadout.weapons.pop();
+          }
+          persist();
+          toast(w.name + ' equipped to slot ' + (state.selectedSlot + 1));
+          rerenderCarousel('arsenal');
+        },
+        onUnequip: function (w) {
+          var i = state.op.loadout.weapons.indexOf(w.id);
+          if (i >= 0) state.op.loadout.weapons.splice(i, 1);
+          persist();
+          toast(w.name + ' unequipped');
+          rerenderCarousel('arsenal');
+        },
+        actionLabel: function (w) {
+          if (state.op.loadout.weapons.indexOf(w.id) >= 0) return 'UNEQUIP';
+          return 'EQUIP TO SLOT ' + (state.selectedSlot + 1);
+        }
+      };
+    }
+    if (id === 'locker') {
+      return {
+        items: SKINS,
+        isOwned: function (s) { return state.op.unlockedSkins.indexOf(s.id) >= 0; },
+        isEquipped: function (s) { return state.op.loadout.skin === s.id; },
+        svg: skinSvg,
+        priceLabel: function (s) { return s.cost === 0 ? 'FREE' : fmtCoins(s.cost); },
+        stats: function (s) { return '<span>TIER <strong>' + s.tier + '</strong></span><span>SHAPE <strong>' + s.shape.toUpperCase() + '</strong></span>'; },
+        onUnlock: function (s) {
+          if (state.op.credits < s.cost) { toast('Not enough credits'); return; }
+          state.op.credits -= s.cost;
+          state.op.unlockedSkins.push(s.id);
+          persist(); refreshTopbar();
+          toast(s.name + ' unlocked');
+          rerenderCarousel('locker');
+        },
+        onEquip: function (s) {
+          state.op.loadout.skin = s.id;
+          persist();
+          toast(s.name + ' equipped');
+          rerenderCarousel('locker');
+        },
+        actionLabel: function () { return 'EQUIP'; }
+      };
+    }
+    if (id === 'maps') {
+      return {
+        items: TERRAINS,
+        isOwned: function (t) { return state.op.unlockedTerrains.indexOf(t.id) >= 0; },
+        isEquipped: function (t) { return state.op.loadout.terrain === t.id; },
+        svg: terrainSvg,
+        priceLabel: function (t) { return t.cost === 0 ? 'FREE' : fmtCoins(t.cost); },
+        stats: function (t) { return '<span>TIER <strong>' + t.tier + '</strong></span><span>LAYOUT <strong>' + t.layout.toUpperCase() + '</strong></span>'; },
+        onUnlock: function (t) {
+          if (state.op.credits < t.cost) { toast('Not enough credits'); return; }
+          state.op.credits -= t.cost;
+          state.op.unlockedTerrains.push(t.id);
+          persist(); refreshTopbar();
+          toast(t.name + ' unlocked');
+          rerenderCarousel('maps');
+        },
+        onEquip: function (t) {
+          state.op.loadout.terrain = t.id;
+          state.op.settings.theme = (t.layout === 'blobs' || t.layout === 'trench') ? 'cave' : 'city';
+          persist();
+          toast(t.name + ' selected');
+          rerenderCarousel('maps');
+        },
+        actionLabel: function () { return 'SELECT'; }
+      };
+    }
+  }
+
+  function rerenderCarousel(id) {
+    var stage = $('cStage');
+    if (!stage) return;
+    renderCarouselItems(id);
+    renderCarouselDots(id);
+    renderCarouselAction(id);
+    updateSlotStrip();
+  }
+
+  function updateSlotStrip() {
+    var strip = $('slotStrip');
+    if (!strip) return;
+    qsa('.slot-chip', strip).forEach(function (chip) {
+      var i = parseInt(chip.dataset.slotPick, 10);
+      chip.classList.toggle('is-active', i === state.selectedSlot);
+      var wid = state.op.loadout.weapons[i];
+      var w = wid != null ? WEAPONS[wid] : null;
+      chip.textContent = (i + 1) + (w ? ' ' + w.glyph : '');
+    });
+  }
+
+  function renderCarouselItems(id) {
+    var stage = $('cStage');
+    if (!stage) return;
+    var cfg = getCarouselConfig(id);
+    var items = cfg.items;
+    var idx = state.carouselIndex[id] || 0;
+
+    stage.innerHTML = '';
+
+    items.forEach(function (item, i) {
+      var offset = i - idx;
+      var abs = Math.abs(offset);
+      if (abs > 3) return; /* only render the visible window */
+
+      var owned = cfg.isOwned(item);
+      var equipped = cfg.isEquipped(item);
+
+      var wrapper = el('div', 'c-item' + (abs === 0 ? ' is-active' : '') + (abs > 0 ? ' is-clickable' : '') + (owned ? '' : ' is-locked') + (equipped ? ' is-equipped' : ''));
+      wrapper.dataset.index = i;
+      wrapper.style.setProperty('--accent', item.accent || '#ff3a3a');
+
+      /* Position formula:
+         - Active item: centered, full size
+         - Neighbors: pushed left/right, scaled down, lower opacity
+         - Further: even smaller, more transparent */
+      var x = offset * 380;
+      var scale = abs === 0 ? 1 : abs === 1 ? 0.76 : 0.58;
+      var rotateY = offset === 0 ? 0 : offset > 0 ? -22 : 22;
+      var z = abs === 0 ? 0 : -Math.min(abs * 160, 320);
+      var opacity = abs === 0 ? 1 : abs === 1 ? 0.62 : 0.28;
+
+      wrapper.style.transform =
+        'translate(-50%, -50%) ' +
+        'translateX(' + x + 'px) ' +
+        'translateZ(' + z + 'px) ' +
+        'rotateY(' + rotateY + 'deg) ' +
+        'scale(' + scale + ')';
+      wrapper.style.opacity = String(opacity);
+      wrapper.style.zIndex = String(100 - abs);
+
+      var statsHtml = cfg.stats(item);
+
+      wrapper.innerHTML =
+        '<div class="c-card">' +
+          (equipped ? '<div class="c-equipped-badge">EQUIPPED</div>' : '') +
+          '<div class="c-ribbon">' +
+            '<span class="tier">TIER ' + item.tier + '</span>' +
+            '<span class="key-hint">' + (i + 1) + ' / ' + items.length + '</span>' +
+          '</div>' +
+          '<div class="c-art">' + cfg.svg(item) + '</div>' +
+          '<div class="c-info">' +
+            '<div class="c-name">' + esc(item.name) + '</div>' +
+            '<div class="c-stats">' + statsHtml + '</div>' +
+            '<div class="c-desc">' + esc(item.desc) + '</div>' +
+          '</div>' +
+        '</div>';
+
+      /* Click on a neighbor to jump to it */
+      wrapper.addEventListener('click', function (e) {
+        if (abs === 0) return;
+        /* If it's a neighbor, jump to that index */
+        e.stopPropagation();
+        goToIndex(id, i);
+      });
+
+      stage.appendChild(wrapper);
+    });
+
+    /* Update arrow disabled states */
+    var prev = $('cPrev'), next = $('cNext');
+    if (prev) prev.disabled = idx <= 0;
+    if (next) next.disabled = idx >= items.length - 1;
+  }
+
+  function renderCarouselDots(id) {
+    var dots = $('cDots');
+    if (!dots) return;
+    var cfg = getCarouselConfig(id);
+    var items = cfg.items;
+    var idx = state.carouselIndex[id] || 0;
+    dots.innerHTML = '';
+    items.forEach(function (item, i) {
+      var owned = cfg.isOwned(item);
+      var d = el('div', 'c-dot' + (i === idx ? ' is-active' : '') + (owned ? ' is-owned' : ''));
+      d.title = item.name;
+      d.addEventListener('click', function () { goToIndex(id, i); });
+      dots.appendChild(d);
+    });
+  }
+
+  function renderCarouselAction(id) {
+    var bar = $('cAction');
+    if (!bar) return;
+    var cfg = getCarouselConfig(id);
+    var items = cfg.items;
+    var idx = state.carouselIndex[id] || 0;
+    var item = items[idx];
+    var owned = cfg.isOwned(item);
+    var equipped = cfg.isEquipped(item);
+    var canAfford = state.op.credits >= item.cost;
+
+    bar.innerHTML = '';
+
+    /* Price tag */
+    var price = el('span', 'price' + (owned ? ' owned' : canAfford ? '' : ' poor'),
+      owned ? 'OWNED' : cfg.priceLabel(item));
+    bar.appendChild(price);
+
+    if (!owned) {
+      var unlock = el('button', 'btn', 'UNLOCK');
+      if (!canAfford) unlock.disabled = true;
+      unlock.addEventListener('click', function () { cfg.onUnlock(item); });
+      bar.appendChild(unlock);
+    } else if (equipped) {
+      var unequip = el('button', 'btn ghost', id === 'arsenal' ? 'UNEQUIP' : 'EQUIPPED');
+      if (id !== 'arsenal') unequip.disabled = true;
+      else unequip.addEventListener('click', function () { cfg.onUnequip(item); });
+      bar.appendChild(unequip);
+    } else {
+      var equip = el('button', 'btn', cfg.actionLabel(item));
+      equip.addEventListener('click', function () { cfg.onEquip(item); });
+      bar.appendChild(equip);
+    }
+
+    /* Slot shortcuts for arsenal */
+    if (id === 'arsenal') {
+      var slotHint = el('span', 'price', 'SLOT ' + (state.selectedSlot + 1));
+      bar.appendChild(slotHint);
+    }
+  }
+
+  function goToIndex(id, i) {
+    var cfg = getCarouselConfig(id);
+    var len = cfg.items.length;
+    if (i < 0) i = 0;
+    if (i >= len) i = len - 1;
+    state.carouselIndex[id] = i;
+    renderCarouselItems(id);
+    renderCarouselDots(id);
+    renderCarouselAction(id);
+    playStepSound();
+  }
+
+  /* A subtle audio pulse when stepping through the carousel.
+     Uses the Web Audio API directly; no files. */
+  var _audioCtx = null;
+  function playStepSound() {
+    if (!state.op || !state.op.settings.sfx) return;
+    try {
+      if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (_audioCtx.state === 'suspended') _audioCtx.resume();
+      var o = _audioCtx.createOscillator();
+      var g = _audioCtx.createGain();
+      o.type = 'triangle';
+      o.frequency.value = 620;
+      g.gain.setValueAtTime(0.0001, _audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.022, _audioCtx.currentTime + 0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, _audioCtx.currentTime + 0.09);
+      o.connect(g); g.connect(_audioCtx.destination);
+      o.start(); o.stop(_audioCtx.currentTime + 0.1);
+    } catch (e) {}
+  }
+
+  function wireCarousel(id) {
+    var prev = $('cPrev'), next = $('cNext');
+    if (prev) prev.addEventListener('click', function () { goToIndex(id, (state.carouselIndex[id] || 0) - 1); });
+    if (next) next.addEventListener('click', function () { goToIndex(id, (state.carouselIndex[id] || 0) + 1); });
+
+    /* Keyboard nav */
+    var keyHandler = function (e) {
+      if (state.room !== id) return;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); goToIndex(id, (state.carouselIndex[id] || 0) - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); goToIndex(id, (state.carouselIndex[id] || 0) + 1); }
+    };
+    document.addEventListener('keydown', keyHandler);
+
+    /* Touch / trackpad swipe */
+    var startX = null;
+    var wrap = $('carousel');
+    if (wrap) {
+      wrap.addEventListener('touchstart', function (e) {
+        startX = e.touches[0].clientX;
+      }, { passive: true });
+      wrap.addEventListener('touchend', function (e) {
+        if (startX == null) return;
+        var dx = e.changedTouches[0].clientX - startX;
+        startX = null;
+        if (Math.abs(dx) < 50) return;
+        var cur = state.carouselIndex[id] || 0;
+        goToIndex(id, cur + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+    }
+
+    /* Initial render */
+    renderCarouselItems(id);
+    renderCarouselDots(id);
+    renderCarouselAction(id);
+
+    /* Slot chips for arsenal */
     qsa('[data-slot-pick]').forEach(function (chip) {
       chip.addEventListener('click', function () {
         state.selectedSlot = parseInt(chip.dataset.slotPick, 10);
-        showRoom('arsenal');
-      });
-    });
-    qsa('[data-action="unlock"]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var wid = parseInt(b.dataset.wid, 10);
-        var w = WEAPONS[wid];
-        if (state.op.credits < w.cost) { toast('Not enough credits'); return; }
-        state.op.credits -= w.cost;
-        state.op.unlockedWeapons.push(wid);
-        persist();
-        toast(w.name + ' unlocked');
-        refreshTopbar();
-        showRoom('arsenal');
-      });
-    });
-    qsa('[data-action="equip"]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var wid = parseInt(b.dataset.wid, 10);
-        var w = WEAPONS[wid];
-        var i = state.op.loadout.weapons.indexOf(wid);
-        if (i >= 0) state.op.loadout.weapons.splice(i, 1);
-        state.op.loadout.weapons[state.selectedSlot] = wid;
-        while (state.op.loadout.weapons.length && state.op.loadout.weapons[state.op.loadout.weapons.length - 1] == null) {
-          state.op.loadout.weapons.pop();
-        }
-        persist();
-        toast(w.name + ' equipped');
-        showRoom('arsenal');
-      });
-    });
-    qsa('[data-action="unequip"]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var wid = parseInt(b.dataset.wid, 10);
-        var i = state.op.loadout.weapons.indexOf(wid);
-        if (i >= 0) state.op.loadout.weapons.splice(i, 1);
-        persist();
-        toast('Unequipped');
-        showRoom('arsenal');
+        updateSlotStrip();
+        renderCarouselAction(id);
       });
     });
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     ROOM: LOCKER
-     ═══════════════════════════════════════════════════════════════ */
-  function renderLocker() {
-    var op = state.op;
-    var cards = SKINS.map(function (s) {
-      var owned = op.unlockedSkins.indexOf(s.id) >= 0;
-      var equipped = op.loadout.skin === s.id;
-      var canAfford = op.credits >= s.cost;
-      var cls = 'item-card' + (owned ? '' : ' locked') + (equipped ? ' equipped' : '');
-      var costCls = s.cost === 0 || owned ? 'owned' : (canAfford ? '' : 'poor');
-      var costText = s.cost === 0 ? 'FREE' : (owned ? 'OWNED' : fmtCoins(s.cost));
-      var action = '';
-      if (!owned) {
-        action = '<button class="btn sm block" data-action="unlock" data-sid="' + s.id + '"' + (canAfford ? '' : ' disabled') + '>Unlock</button>';
-      } else if (equipped) {
-        action = '<button class="btn sm block ghost" disabled>Equipped</button>';
-      } else {
-        action = '<button class="btn sm block" data-action="equip" data-sid="' + s.id + '">Equip</button>';
-      }
-      return '<div class="' + cls + '">' +
-        '<div class="item-icon" style="background:radial-gradient(circle at 50% 40%,' + s.accent + '22, transparent 70%), rgba(5,5,5,0.5)">' + skinSvg(s) + '</div>' +
-        '<div class="item-name">' + esc(s.name) + '</div>' +
-        '<div class="item-desc">' + esc(s.desc) + '</div>' +
-        '<div class="item-meta">' +
-          '<span class="item-tier">Tier ' + s.tier + '</span>' +
-          '<span class="item-cost ' + costCls + '">' + costText + '</span>' +
-        '</div>' +
-        action +
-      '</div>';
-    }).join('');
-
-    return '' +
-      '<section class="room active">' +
-        '<div class="room-head">' +
-          '<div>' +
-            '<div class="room-kicker">Operator Skins</div>' +
-            '<h2 class="room-title">The Locker</h2>' +
-            '<p class="room-sub">Sixteen silhouettes. Pick your face.</p>' +
-          '</div>' +
-        '</div>' +
-        '<div class="item-grid">' + cards + '</div>' +
-      '</section>';
-  }
-
-  function wireLocker() {
-    qsa('[data-action="unlock"][data-sid]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var sid = parseInt(b.dataset.sid, 10);
-        var s = SKINS[sid];
-        if (state.op.credits < s.cost) { toast('Not enough credits'); return; }
-        state.op.credits -= s.cost;
-        state.op.unlockedSkins.push(sid);
-        persist();
-        toast(s.name + ' unlocked');
-        refreshTopbar();
-        showRoom('locker');
-      });
-    });
-    qsa('[data-action="equip"][data-sid]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var sid = parseInt(b.dataset.sid, 10);
-        state.op.loadout.skin = sid;
-        persist();
-        toast(SKINS[sid].name + ' equipped');
-        showRoom('locker');
-      });
-    });
-  }
-
-  /* ═══════════════════════════════════════════════════════════════
-     ROOM: MAPS
-     ═══════════════════════════════════════════════════════════════ */
-  function renderMaps() {
-    var op = state.op;
-    var cards = TERRAINS.map(function (t) {
-      var owned = op.unlockedTerrains.indexOf(t.id) >= 0;
-      var equipped = op.loadout.terrain === t.id;
-      var canAfford = op.credits >= t.cost;
-      var cls = 'item-card' + (owned ? '' : ' locked') + (equipped ? ' equipped' : '');
-      var costCls = t.cost === 0 || owned ? 'owned' : (canAfford ? '' : 'poor');
-      var costText = t.cost === 0 ? 'FREE' : (owned ? 'OWNED' : fmtCoins(t.cost));
-      var action = '';
-      if (!owned) {
-        action = '<button class="btn sm block" data-action="unlock" data-tid="' + t.id + '"' + (canAfford ? '' : ' disabled') + '>Unlock</button>';
-      } else if (equipped) {
-        action = '<button class="btn sm block ghost" disabled>Selected</button>';
-      } else {
-        action = '<button class="btn sm block" data-action="equip" data-tid="' + t.id + '">Select</button>';
-      }
-      return '<div class="' + cls + '">' +
-        '<div class="item-icon">' + terrainSvg(t) + '</div>' +
-        '<div class="item-name">' + esc(t.name) + '</div>' +
-        '<div class="item-desc">' + esc(t.desc) + '</div>' +
-        '<div class="item-meta">' +
-          '<span class="item-tier">Tier ' + t.tier + '</span>' +
-          '<span class="item-cost ' + costCls + '">' + costText + '</span>' +
-        '</div>' +
-        action +
-      '</div>';
-    }).join('');
-
-    return '' +
-      '<section class="room active">' +
-        '<div class="room-head">' +
-          '<div>' +
-            '<div class="room-kicker">Terrain Selection</div>' +
-            '<h2 class="room-title">The Map Room</h2>' +
-            '<p class="room-sub">Where you fight changes how you fight.</p>' +
-          '</div>' +
-        '</div>' +
-        '<div class="item-grid">' + cards + '</div>' +
-      '</section>';
-  }
-
-  function wireMaps() {
-    qsa('[data-action="unlock"][data-tid]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var tid = parseInt(b.dataset.tid, 10);
-        var t = TERRAINS[tid];
-        if (state.op.credits < t.cost) { toast('Not enough credits'); return; }
-        state.op.credits -= t.cost;
-        state.op.unlockedTerrains.push(tid);
-        persist();
-        toast(t.name + ' unlocked');
-        refreshTopbar();
-        showRoom('maps');
-      });
-    });
-    qsa('[data-action="equip"][data-tid]').forEach(function (b) {
-      b.addEventListener('click', function () {
-        var tid = parseInt(b.dataset.tid, 10);
-        state.op.loadout.terrain = tid;
-        var t = TERRAINS[tid];
-        state.op.settings.theme = (t.layout === 'blobs' || t.layout === 'trench') ? 'cave' : 'city';
-        persist();
-        toast(t.name + ' selected');
-        showRoom('maps');
-      });
-    });
-  }
-
-  /* ═══════════════════════════════════════════════════════════════
-     ROOM: TERMINAL
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══════════════ TERMINAL ═══════════════ */
   function renderTerminal() {
     var op = state.op;
     var s = op.stats;
     var lvl = levelInfo(op.xp);
-
     var rows = [
       ['Operator Level', lvl.level + ' (' + lvl.into + ' / ' + lvl.need + ' XP)'],
-      ['Lifetime Runs', s.runs],
-      ['Lifetime Kills', s.totalKills],
-      ['Lifetime Score', s.totalScore],
-      ['Best Score', s.bestScore],
-      ['Best Wave', s.bestWave],
-      ['Time Played', fmtTime(s.totalTime)],
-      ['Deaths', s.deaths],
-      ['Wins', s.wins]
+      ['Lifetime Runs', s.runs], ['Lifetime Kills', s.totalKills], ['Lifetime Score', s.totalScore],
+      ['Best Score', s.bestScore], ['Best Wave', s.bestWave], ['Time Played', fmtTime(s.totalTime)],
+      ['Deaths', s.deaths], ['Wins', s.wins]
     ].map(function (r) {
       return '<div class="term-row"><span class="term-label">' + r[0] + '</span><span class="term-value">' + r[1] + '</span></div>';
     }).join('');
-
     var history = op.history && op.history.length
       ? op.history.slice(0, 10).map(function (h) {
           return '<div class="term-row">' +
@@ -1541,45 +1751,29 @@
           '</div>';
         }).join('')
       : '<div class="empty">No runs recorded yet</div>';
-
     return '' +
       '<section class="room active">' +
         '<div class="room-head">' +
-          '<div>' +
-            '<div class="room-kicker">Record & Log</div>' +
-            '<h2 class="room-title">The Terminal</h2>' +
-            '<p class="room-sub">Everything the operator has done.</p>' +
-          '</div>' +
+          '<div><div class="room-kicker">Record & Log</div><h2 class="room-title">The Terminal</h2></div>' +
         '</div>' +
         '<div class="panel" style="margin-bottom:16px">' +
-          '<div class="panel-title">Statistics</div>' +
-          rows +
+          '<div class="panel-title">Statistics</div>' + rows +
         '</div>' +
         '<div class="panel">' +
-          '<div class="panel-title">Recent Runs</div>' +
-          history +
+          '<div class="panel-title">Recent Runs</div>' + history +
         '</div>' +
       '</section>';
   }
 
-  function wireTerminal() {}
-
-  /* ═══════════════════════════════════════════════════════════════
-     ROOM: MIRROR
-     ═══════════════════════════════════════════════════════════════ */
+  /* ═══════════════ MIRROR ═══════════════ */
   function renderMirror() {
     var op = state.op;
     var skin = SKINS[op.loadout.skin] || SKINS[0];
     var lvl = levelInfo(op.xp);
-
     return '' +
       '<section class="room active">' +
         '<div class="room-head">' +
-          '<div>' +
-            '<div class="room-kicker">Operator Profile</div>' +
-            '<h2 class="room-title">The Mirror</h2>' +
-            '<p class="room-sub">Who you are, and what you\'ve earned.</p>' +
-          '</div>' +
+          '<div><div class="room-kicker">Operator Profile</div><h2 class="room-title">The Mirror</h2></div>' +
         '</div>' +
         '<div class="profile-card">' +
           '<div class="profile-identity">' +
@@ -1602,40 +1796,70 @@
       '</section>';
   }
 
-  function wireMirror() {
-    var b = $('deleteBtn');
-    if (b) b.addEventListener('click', function () {
-      if (!confirm('Permanently delete ' + state.op.name + '? All progress will be lost.')) return;
-      delete state.save.operators[state.op.name];
-      if (state.save.lastOperator === state.op.name) state.save.lastOperator = null;
+  /* ═══════════════ WIRING ═══════════════ */
+  function wireRoom(id) {
+    if (id === 'door') wireDoor();
+    else if (id === 'terminal') wireTerminal();
+    else if (id === 'mirror') wireMirror();
+    else if (id === 'arsenal' || id === 'locker' || id === 'maps') wireCarousel(id);
+  }
+
+  function wireDoor() {
+    var play = $('playBtn');
+    if (play) play.addEventListener('click', function () {
+      if (!state.op.loadout.weapons.length) {
+        toast('Equip a weapon first');
+        showRoom('arsenal');
+        return;
+      }
+      toast('Deploying…');
+      setTimeout(function () { window.location.href = 'play.html'; }, 500);
+    });
+    var endless = $('endlessBtn');
+    if (endless) endless.addEventListener('click', function () {
+      state.op.settings.mode = 'endless';
       persist();
-      clearSession();
-      window.location.href = 'login-single.html';
+      toast('Entering Endless Loop…');
+      setTimeout(function () { window.location.href = 'play.html'; }, 500);
+    });
+    qsa('.slot').forEach(function (s) {
+      s.addEventListener('click', function () {
+        state.selectedSlot = parseInt(s.dataset.slot, 10) || 0;
+        showRoom('arsenal');
+      });
     });
   }
 
-  /* ═══════════════════════════════════════════════════════════════
-     BOOT
-     ═══════════════════════════════════════════════════════════════ */
+  function wireTerminal() {}
+  function wireMirror() {
+    var b = $('deleteBtn');
+    if (b) b.addEventListener('click', function () {
+      if (!confirm('Permanently delete ' + state.op.name + '?')) return;
+      delete state.save.operators[state.op.name];
+      if (state.save.lastOperator === state.op.name) state.save.lastOperator = null;
+      persist(); clearSession();
+      window.location.href = 'login-s.html';
+    });
+  }
+
+  /* ═══════════════ BOOT ═══════════════ */
   function boot() {
-    /* Check session */
     var session = loadSession();
     if (!session || !session.name) {
-      console.warn('No session — redirecting to login');
-      window.location.href = 'login-single.html';
+      console.warn('No session — redirecting');
+      window.location.href = 'login-s.html';
       return;
     }
-
     var save = loadSave();
     var op = save.operators[session.name];
     if (!op) {
-      console.warn('Session operator missing from save — redirecting to login');
+      console.warn('Session operator missing');
       clearSession();
-      window.location.href = 'login-single.html';
+      window.location.href = 'login-s.html';
       return;
     }
 
-    /* Fill in any missing fields (defensive for older saves) */
+    /* Defensive defaults */
     if (!op.unlockedWeapons) op.unlockedWeapons = [0];
     if (!op.unlockedSkins) op.unlockedSkins = [0];
     if (!op.unlockedTerrains) op.unlockedTerrains = [0];
@@ -1654,16 +1878,13 @@
     op.lastSeen = Date.now();
     persist();
 
-    /* Render */
     renderSidebar();
     refreshTopbar();
     showRoom('door');
-
     console.log('Hub booted for operator:', op.name);
   }
 
   boot();
-
 })();
 </script>
 </body>
