@@ -4,522 +4,114 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Sign In — Predators Horizon</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body {
-    min-height: 100%;
-    background: #050505;
-    color: #e8e4dc;
-    font-family: 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
-    font-weight: 600;
-  }
-  .auth {
-    display: grid;
-    grid-template-columns: 1fr;
-    min-height: 100vh;
-  }
-  @media (min-width: 900px) {
-    .auth { grid-template-columns: 1.1fr 1fr; }
-  }
-  .art {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 48px;
-    background:
-      radial-gradient(ellipse at 50% 40%, rgba(139,26,26,0.25), transparent 60%),
-      linear-gradient(160deg, #050505, #0a0a0b);
-    text-align: center;
-  }
-  @media (min-width: 900px) { .art { display: flex; } }
-  .art img {
-    width: 100%;
-    max-width: 520px;
-    mix-blend-mode: screen;
-    margin-bottom: 32px;
-    animation: pulse 6s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { filter: drop-shadow(0 0 40px rgba(255,58,58,0.25)); }
-    50%      { filter: drop-shadow(0 0 60px rgba(255,58,58,0.5)); }
-  }
-  .art-kicker {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: #ff3a3a;
-    margin-bottom: 16px;
-    text-shadow: 0 0 20px rgba(255,58,58,0.5);
-  }
-  .art-quote {
-    font-size: 18px;
-    color: #b8b2a8;
-    line-height: 1.7;
-  }
-  .form-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 24px;
-  }
-  .form {
-    width: 100%;
-    max-width: 420px;
-  }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 32px;
-  }
-  .brand img {
-    height: 48px;
-    mix-blend-mode: screen;
-  }
-  .brand-text {
-    font-size: 13px;
-    font-weight: 900;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
-  .back {
-    display: inline-block;
-    color: #6b6b73;
-    text-decoration: none;
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-    font-family: monospace;
-  }
-  .back:hover { color: #ff3a3a; }
-  .tabs {
-    display: flex;
-    gap: 4px;
-    padding: 4px;
-    background: #0a0a0b;
-    border: 1px solid #2a2422;
-    border-radius: 5px;
-    margin-bottom: 24px;
-  }
-  .tab {
-    flex: 1;
-    padding: 10px;
-    text-align: center;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: #b8b2a8;
-    background: transparent;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    font-family: inherit;
-    transition: 0.2s;
-  }
-  .tab:hover { color: #e8e4dc; }
-  .tab.active {
-    background: linear-gradient(180deg, #8b1a1a, #4a0d0d);
-    color: #fff;
-    box-shadow: 0 0 20px rgba(255,58,58,0.5);
-  }
-  .pane { display: none; }
-  .pane.active { display: block; }
-  label {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: #b8b2a8;
-    margin-bottom: 8px;
-  }
-  input {
-    width: 100%;
-    padding: 12px 14px;
-    background: rgba(5,5,5,0.7);
-    border: 1px solid #2a2422;
-    border-radius: 3px;
-    color: #e8e4dc;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    outline: none;
-    transition: 0.2s;
-  }
-  input:focus {
-    border-color: #ff3a3a;
-    box-shadow: 0 0 0 3px rgba(139,26,26,0.3);
-  }
-  input::placeholder { color: #6b6b73; }
-  .hint {
-    font-size: 11px;
-    color: #6b6b73;
-    margin-top: -12px;
-    margin-bottom: 16px;
-  }
-  .error {
-    min-height: 18px;
-    font-family: monospace;
-    font-size: 12px;
-    color: #ff3a3a;
-    text-align: center;
-    margin: 12px 0;
-  }
-  .btn {
-    display: block;
-    width: 100%;
-    padding: 14px 28px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    border: 1.5px solid #ff3a3a;
-    background: linear-gradient(180deg, #8b1a1a, #4a0d0d);
-    color: #fff;
-    border-radius: 3px;
-    cursor: pointer;
-    box-shadow: 0 0 24px rgba(255,58,58,0.4);
-    transition: 0.2s;
-    margin-top: 8px;
-  }
-  .btn:hover {
-    background: linear-gradient(180deg, #ff3a3a, #8b1a1a);
-    transform: translateY(-1px);
-    box-shadow: 0 0 32px rgba(255,58,58,0.7);
-  }
-  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-  .btn.ghost {
-    background: transparent;
-    border-color: #2a2422;
-    color: #b8b2a8;
-    box-shadow: none;
-  }
-  .btn.ghost:hover {
-    border-color: #ff3a3a;
-    color: #e8e4dc;
-  }
-  .divider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 24px 0;
-    color: #6b6b73;
-    font-family: monospace;
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
-  .divider::before, .divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #2a2422;
-  }
-  .footer {
-    margin-top: 32px;
-    text-align: center;
-    font-family: monospace;
-    font-size: 11px;
-    color: #6b6b73;
-  }
-</style>
+<meta name="theme-color" content="#050505">
+<link rel="icon" type="image/svg+xml" href="assets/logo/logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/auth.css">
 </head>
 <body>
-
 <div class="auth">
-  <aside class="art">
-    <div>
-      <img src="assets/logo/logo2.svg" alt="Predators Horizon">
-      <div class="art-kicker">— Identity Layer · Operator Clearance —</div>
-      <p class="art-quote">
+
+  <!-- ═══════════ LEFT: Art ═══════════ -->
+  <aside class="auth__art">
+    <div class="auth__art-inner">
+      <img class="auth__art-banner" src="assets/logo/logo2.svg" alt="Predators Horizon">
+      <div class="auth__art-copy">— Identity Layer · Operator Clearance —</div>
+      <p class="auth__art-quote">
         The horizon doesn't wait.<br>
-        Sign in, operator.
+        Sign in, operator. The swarm is already moving.
       </p>
     </div>
   </aside>
 
-  <main class="form-wrap">
-    <form class="form" id="authForm" onsubmit="return false;">
+  <!-- ═══════════ RIGHT: Form ═══════════ -->
+  <main class="auth__form-wrap">
+    <form class="auth__form" id="authForm" autocomplete="on" novalidate>
 
-      <a class="back" href="index.html">← Back to Site</a>
+      <a class="auth__back" href="index.html">← Back to Site</a>
 
-      <div class="brand">
+      <div class="auth__brand">
         <img src="assets/logo/logo.svg" alt="">
-        <span class="brand-text">Predators Horizon</span>
+        <span class="auth__brand-text">Predators Horizon</span>
       </div>
 
-      <div class="tabs">
-        <button type="button" class="tab active" data-tab="signin">Sign In</button>
-        <button type="button" class="tab" data-tab="signup">New Operator</button>
+      <!-- Tabs -->
+      <div class="auth__tabs" role="tablist">
+        <button type="button" class="auth__tab is-active" data-tab="signin" role="tab">Sign In</button>
+        <button type="button" class="auth__tab" data-tab="signup" role="tab">New Operator</button>
       </div>
 
-      <section class="pane active" data-pane="signin">
-        <label for="siUser">Callsign</label>
-        <input id="siUser" type="text" placeholder="YOUR CALLSIGN" maxlength="14" autocomplete="off">
+      <!-- ── Sign In pane ── -->
+      <section class="auth__pane is-active" data-pane="signin">
+        <div class="auth__field auth__users">
+          <label class="ph-label" for="signinUser">Callsign</label>
+          <input class="ph-input" id="signinUser" type="text" name="username"
+                 autocomplete="username" placeholder="YOUR CALLSIGN" maxlength="14" required>
+          <div class="auth__users-list" id="usersList"></div>
+        </div>
 
-        <label for="siPin">Access Code</label>
-        <input id="siPin" type="password" placeholder="••••••" maxlength="8" autocomplete="off">
-        <div class="hint">Leave blank if this operator has no access code.</div>
+        <div class="auth__field">
+          <label class="ph-label" for="signinPin">Access Code</label>
+          <input class="ph-input" id="signinPin" type="password" name="current-password"
+                 autocomplete="current-password" placeholder="••••••" maxlength="8">
+          <div class="auth__hint">Leave blank if this operator has no access code.</div>
+        </div>
 
-        <div class="error" id="siErr"></div>
+        <div class="auth__error" id="signinError" role="alert"></div>
 
-        <button type="button" class="btn" id="btnSignIn">Enter Predators Horizon</button>
+        <button type="submit" class="ph-btn ph-btn--primary ph-btn--block ph-btn--lg auth__submit" data-submit="signin">
+          Enter Predators Horizon
+        </button>
       </section>
 
-      <section class="pane" data-pane="signup">
-        <label for="suUser">Choose a Callsign</label>
-        <input id="suUser" type="text" placeholder="E.G. NOVA-7" maxlength="14" autocomplete="off">
-        <div class="hint">2–14 characters. Letters, numbers, spaces, dash, underscore.</div>
+      <!-- ── Sign Up pane ── -->
+      <section class="auth__pane" data-pane="signup">
+        <div class="auth__field">
+          <label class="ph-label" for="signupUser">Choose a Callsign</label>
+          <input class="ph-input" id="signupUser" type="text" name="new-username"
+                 autocomplete="username" placeholder="E.G. NOVA-7" maxlength="14" required>
+          <div class="auth__hint">2–14 characters. Letters, numbers, spaces, dash, underscore.</div>
+        </div>
 
-        <label for="suPin">Access Code (optional)</label>
-        <input id="suPin" type="password" placeholder="••••••" maxlength="8" autocomplete="off">
+        <div class="auth__field">
+          <label class="ph-label" for="signupPin">Access Code <span style="color:var(--ash)">(optional)</span></label>
+          <input class="ph-input" id="signupPin" type="password" name="new-password"
+                 autocomplete="new-password" placeholder="••••••" maxlength="8">
+          <div class="auth__hint">If set, you'll need it to sign back in on another browser.</div>
+        </div>
 
-        <div class="error" id="suErr"></div>
+        <div class="auth__error" id="signupError" role="alert"></div>
 
-        <button type="button" class="btn" id="btnSignUp">Create Operator</button>
+        <button type="submit" class="ph-btn ph-btn--primary ph-btn--block ph-btn--lg auth__submit" data-submit="signup">
+          Create Operator
+        </button>
       </section>
 
-      <div class="divider">or</div>
+      <!-- ── Guest (always visible) ── -->
+      <div class="auth__divider">or</div>
 
-      <button type="button" class="btn ghost" id="btnGuest">Continue as Guest</button>
+      <button type="button" class="ph-btn ph-btn--ghost ph-btn--block auth__guest" id="guestBtn">
+        Continue as Guest
+      </button>
+      <div class="auth__hint" style="text-align:center;margin-top:var(--s-2)">
+        Guest operators are stored locally. You can claim them later.
+      </div>
 
-      <div class="footer">Predators Horizon · v0.1</div>
+      <div class="auth__footer">
+        <p>Predators Horizon · v0.1</p>
+      </div>
 
     </form>
   </main>
+
 </div>
 
-<script>
-/* ═══════════════════════════════════════════════════════════════
-   SELF-CONTAINED AUTH FLOW — no external dependencies
-   ═══════════════════════════════════════════════════════════════ */
-
-(function () {
-  'use strict';
-
-  var SAVE_KEY = 'predatorshorizon.save.v1';
-  var SESSION_KEY = 'predatorshorizon.session.v1';
-
-  /* ── DOM helpers ── */
-  function $(id) { return document.getElementById(id); }
-  function qsa(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
-
-  /* ── Callsign sanitizer ── */
-  function cleanCallsign(raw) {
-    return String(raw || '')
-      .trim()
-      .toUpperCase()
-      .replace(/[^A-Z0-9 _-]/g, '')
-      .replace(/\s+/g, ' ')
-      .slice(0, 14);
-  }
-
-  /* ── Storage wrappers ── */
-  function loadSave() {
-    try {
-      var raw = localStorage.getItem(SAVE_KEY);
-      if (!raw) return { schema: 1, operators: {}, lastOperator: null };
-      var parsed = JSON.parse(raw);
-      if (!parsed || typeof parsed !== 'object') return { schema: 1, operators: {}, lastOperator: null };
-      if (!parsed.operators) parsed.operators = {};
-      return parsed;
-    } catch (e) {
-      console.error('loadSave failed:', e);
-      return { schema: 1, operators: {}, lastOperator: null };
-    }
-  }
-
-  function writeSave(save) {
-    try {
-      localStorage.setItem(SAVE_KEY, JSON.stringify(save));
-      return true;
-    } catch (e) {
-      console.error('writeSave failed:', e);
-      return false;
-    }
-  }
-
-  function writeSession(name, guest) {
-    try {
-      localStorage.setItem(SESSION_KEY, JSON.stringify({
-        name: name,
-        started: Date.now(),
-        lastActive: Date.now(),
-        guest: !!guest
-      }));
-      return true;
-    } catch (e) {
-      console.error('writeSession failed:', e);
-      return false;
-    }
-  }
-
-  /* ── Operator factory ── */
-  function makeOperator(name, pin, guest) {
-    return {
-      schema: 1,
-      id: 'op_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6),
-      name: name,
-      pin: pin || '',
-      guest: !!guest,
-      created: Date.now(),
-      lastSeen: Date.now(),
-      xp: 0,
-      credits: 750,
-      unlockedWeapons: [0],
-      unlockedSkins: [0],
-      unlockedTerrains: [0],
-      loadout: { weapons: [0], skin: 0, terrain: 0 },
-      stats: {
-        runs: 0, kills: 0, deaths: 0, wins: 0,
-        bestScore: 0, bestWave: 0, bestTime: 0,
-        totalTime: 0, totalScore: 0, totalKills: 0,
-        bossesKilled: 0, shotsFired: 0, damageDealt: 0,
-        dashes: 0, pickups: 0, levelsCleared: 0
-      },
-      endless: { bestWave: 0, bestScore: 0, bestLevel: 1, runs: 0 },
-      levels: {},
-      awards: [],
-      settings: { sfx: true, music: false, shake: 1, difficulty: 0, mode: 'large', theme: 'city' },
-      history: []
-    };
-  }
-
-  /* ── Tab switching ── */
-  qsa('.tab').forEach(function (tab) {
-    tab.addEventListener('click', function () {
-      qsa('.tab').forEach(function (t) { t.classList.remove('active'); });
-      tab.classList.add('active');
-      var which = tab.dataset.tab;
-      qsa('.pane').forEach(function (p) {
-        p.classList.toggle('active', p.dataset.pane === which);
-      });
-      $('siErr').textContent = '';
-      $('suErr').textContent = '';
-    });
-  });
-
-  /* ── Sign In ── */
-  $('btnSignIn').addEventListener('click', function () {
-    var errEl = $('siErr');
-    errEl.textContent = '';
-
-    var name = cleanCallsign($('siUser').value);
-    var pin = $('siPin').value;
-
-    if (!name) {
-      errEl.textContent = 'Enter a callsign.';
-      return;
-    }
-
-    var save = loadSave();
-    var op = save.operators[name];
-
-    if (!op) {
-      errEl.textContent = 'No operator with that callsign. Try "New Operator" instead.';
-      return;
-    }
-    if (op.pin && op.pin !== pin) {
-      errEl.textContent = 'Incorrect access code.';
-      return;
-    }
-
-    op.lastSeen = Date.now();
-    save.lastOperator = name;
-    writeSave(save);
-    writeSession(name, op.guest);
-
-    /* Success — brief message then navigate */
-    errEl.style.color = '#4ade80';
-    errEl.textContent = 'Signed in as ' + name + '. Loading safehouse…';
-    $('btnSignIn').disabled = true;
-    setTimeout(function () { window.location.href = 'app.html'; }, 700);
-  });
-
-  /* ── Sign Up ── */
-  $('btnSignUp').addEventListener('click', function () {
-    var errEl = $('suErr');
-    errEl.textContent = '';
-
-    var name = cleanCallsign($('suUser').value);
-    var pin = $('suPin').value;
-
-    if (name.length < 2) {
-      errEl.textContent = 'Callsign must be at least 2 characters.';
-      return;
-    }
-    if (pin && pin.length > 8) {
-      errEl.textContent = 'Access code must be 8 characters or fewer.';
-      return;
-    }
-
-    var save = loadSave();
-    if (save.operators[name]) {
-      errEl.textContent = 'That callsign is already taken.';
-      return;
-    }
-
-    var op = makeOperator(name, pin, false);
-    save.operators[name] = op;
-    save.lastOperator = name;
-    writeSave(save);
-    writeSession(name, false);
-
-    errEl.style.color = '#4ade80';
-    errEl.textContent = 'Operator ' + name + ' created. Loading safehouse…';
-    $('btnSignUp').disabled = true;
-    setTimeout(function () { window.location.href = 'app.html'; }, 700);
-  });
-
-  /* ── Guest ── */
-  $('btnGuest').addEventListener('click', function () {
-    var errEl = $('siErr');
-    errEl.textContent = '';
-
-    var hex = '0123456789ABCDEF';
-    var tag = '';
-    for (var i = 0; i < 4; i++) tag += hex[Math.floor(Math.random() * 16)];
-    var name = 'OPERATOR-' + tag;
-
-    var save = loadSave();
-    /* Ensure uniqueness */
-    var tries = 0;
-    while (save.operators[name] && tries < 20) {
-      tag = '';
-      for (var j = 0; j < 4; j++) tag += hex[Math.floor(Math.random() * 16)];
-      name = 'OPERATOR-' + tag;
-      tries++;
-    }
-
-    var op = makeOperator(name, '', true);
-    save.operators[name] = op;
-    save.lastOperator = name;
-    writeSave(save);
-    writeSession(name, true);
-
-    errEl.style.color = '#4ade80';
-    errEl.textContent = 'Guest session: ' + name + '. Loading safehouse…';
-    $('btnGuest').disabled = true;
-    setTimeout(function () { window.location.href = 'app.html'; }, 700);
-  });
-
-  /* ── Prefill last operator ── */
-  try {
-    var save = loadSave();
-    if (save.lastOperator && save.operators[save.lastOperator]) {
-      $('siUser').value = save.lastOperator;
-    } else {
-      /* No operators yet — switch to signup tab */
-      qsa('.tab')[1].click();
-    }
-  } catch (e) { /* ignore */ }
-
-})();
-</script>
+<script src="js/core.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/session.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
