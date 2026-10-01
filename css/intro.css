@@ -1,0 +1,170 @@
+/* ═══════════════════════════════════════════════════════════════
+   PREDATORS HORIZON — Intro Cinematic
+   "Signal Acquired" (Style C) — ~3 seconds, skippable.
+   Rendered as an overlay that plays on first navigation to app.html.
+   ═══════════════════════════════════════════════════════════════ */
+
+.intro {
+  position: fixed;
+  inset: 0;
+  background: var(--void);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity var(--dur-slow) var(--ease-out);
+}
+.intro.is-out { opacity: 0; pointer-events: none; }
+
+/* ── Static / noise layer ── */
+.intro__static {
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(139,26,26,0.08) 3px),
+    repeating-linear-gradient(90deg, transparent 0, transparent 2px, rgba(139,26,26,0.04) 3px);
+  opacity: 0.6;
+  mix-blend-mode: screen;
+  animation: staticShift 0.12s steps(3) infinite;
+  pointer-events: none;
+}
+@keyframes staticShift {
+  0%   { transform: translate(0, 0); }
+  33%  { transform: translate(-1px, 1px); }
+  66%  { transform: translate(1px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ── Scanline sweep ── */
+.intro__scanline {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,58,58,0.6), transparent);
+  box-shadow: 0 0 20px rgba(255,58,58,0.8);
+  top: -10%;
+  animation: scanSweep 2.8s var(--ease-out) infinite;
+  pointer-events: none;
+}
+@keyframes scanSweep {
+  0%   { top: -10%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 110%; opacity: 0; }
+}
+
+/* ── Center stage ── */
+.intro__stage {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-6);
+  width: 100%;
+  max-width: 720px;
+  padding: var(--s-6);
+}
+
+/* ── Reticle ── */
+.intro__reticle {
+  width: 160px;
+  height: 160px;
+  position: relative;
+  animation: reticleSnap 0.7s var(--ease-out) both;
+  margin-bottom: var(--s-4);
+}
+@keyframes reticleSnap {
+  0%   { transform: scale(2.4); opacity: 0; }
+  60%  { transform: scale(1);   opacity: 1; }
+  80%  { transform: scale(0.94); }
+  100% { transform: scale(1);   opacity: 1; }
+}
+.intro__reticle svg {
+  width: 100%;
+  height: 100%;
+  color: var(--blood-hot);
+  filter: drop-shadow(0 0 20px rgba(255,58,58,0.8));
+  animation: reticleSpin 8s linear infinite;
+}
+@keyframes reticleSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Text sequence ── */
+.intro__line {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: var(--ls-hero);
+  text-transform: uppercase;
+  color: var(--blood-hot);
+  text-shadow: 0 0 20px rgba(255,58,58,0.6);
+  min-height: 1.4em;
+  opacity: 0;
+}
+.intro__line.is-on { opacity: 1; }
+.intro__line .caret {
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  background: var(--blood-hot);
+  vertical-align: text-bottom;
+  margin-left: 4px;
+  animation: caretBlink 0.7s steps(2) infinite;
+}
+@keyframes caretBlink {
+  50% { opacity: 0; }
+}
+
+/* ── Logo reveal ── */
+.intro__logo {
+  width: 200px;
+  max-width: 60%;
+  mix-blend-mode: screen;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: all var(--dur-slower) var(--ease-out);
+}
+.intro__logo.is-on {
+  opacity: 1;
+  transform: scale(1);
+  filter: drop-shadow(0 0 40px rgba(255,58,58,0.6));
+}
+
+/* ── Skip hint ── */
+.intro__skip {
+  position: absolute;
+  bottom: var(--s-8);
+  right: var(--s-8);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-wide);
+  color: var(--ash);
+  text-transform: uppercase;
+  z-index: 3;
+  animation: skipPulse 1.6s ease-in-out infinite;
+}
+@keyframes skipPulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 1; }
+}
+
+/* ── Progress bar at bottom ── */
+.intro__progress {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: rgba(139,26,26,0.15);
+  z-index: 3;
+}
+.intro__progress i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--blood), var(--blood-hot));
+  box-shadow: 0 0 12px rgba(255,58,58,0.8);
+}
