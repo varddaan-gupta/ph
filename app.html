@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Safehouse — Predators Horizon</title>
+<meta name="theme-color" content="#050505">
+<link rel="icon" type="image/svg+xml" href="assets/logo/logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/hub.css">
+<link rel="stylesheet" href="css/intro.css">
+</head>
+<body>
+
+<div class="hub" id="hub">
+
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="hub__sidebar" id="sidebar">
+    <!-- Rooms are rendered by hub.js -->
+  </aside>
+
+  <!-- ═══════════ TOPBAR ═══════════ -->
+  <header class="hub__topbar">
+    <div class="hub__brand">
+      <img src="assets/logo/logo.svg" alt="">
+      <span class="hub__brand-name">Predators Horizon</span>
+    </div>
+
+    <div class="hub__status">
+      <div class="hub__stat" title="Credits">
+        <svg class="hub__stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 7 v10 M9 10 h6 M9 14 h6"/>
+        </svg>
+        <div>
+          <div class="hub__stat-label">Credits</div>
+          <div class="hub__stat-value" id="topbarCredits">₡0</div>
+        </div>
+      </div>
+
+      <div class="hub__xp" id="topbarXp">
+        <div class="hub__xp-ring">
+          <svg viewBox="0 0 36 36">
+            <circle class="bg" cx="18" cy="18" r="15.9"></circle>
+            <circle class="fg" id="xpRing" cx="18" cy="18" r="15.9"></circle>
+          </svg>
+          <span class="hub__xp-level" id="topbarLevel">1</span>
+        </div>
+        <div class="hub__xp-meta">
+          <div class="hub__xp-name" id="topbarName">OPERATOR</div>
+          <div class="hub__xp-sub" id="topbarXpSub">0 / 120 XP</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════ MAIN ═══════════ -->
+  <main class="hub__main" id="main">
+    <!-- Rooms rendered by hub.js -->
+  </main>
+
+</div>
+
+<!-- Toast layer for transient notifications -->
+<div class="toast-layer" id="toastLayer"></div>
+
+<script src="js/core.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/session.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/intro.js"></script>
+<script src="js/hub.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

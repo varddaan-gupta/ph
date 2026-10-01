@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Predator 01 — Predators Horizon</title>
+<meta name="theme-color" content="#050505">
+<link rel="icon" type="image/svg+xml" href="assets/logo/logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/hub.css">
+<style>
+  /* ═══════════ GAME CANVAS STAGE ═══════════
+     The actual game is Layer 8. For now this is the HUD chrome and
+     a dark stage, so the transition from hub → play is real. */
+  body {
+    overflow: hidden;
+    background: #050505;
+  }
+  .stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Top strip: back button + level label ── */
+  .stage__top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--s-4) var(--s-6);
+    pointer-events: none;
+  }
+  .stage__top > * { pointer-events: auto; }
+  .stage__back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    padding: var(--s-2) var(--s-4);
+    background: rgba(5,5,5,0.7);
+    border: var(--border-iron);
+    border-radius: var(--r-sm);
+    font-family: var(--font-display);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--bone-dim);
+    backdrop-filter: blur(10px);
+    transition: all var(--dur-base) var(--ease-out);
+    text-decoration: none;
+  }
+  .stage__back:hover {
+    border-color: var(--blood);
+    color: var(--bone);
+    box-shadow: 0 0 20px rgba(255,58,58,0.25);
+  }
+  .stage__back svg { width: 14px; height: 14px; }
+
+  .stage__level {
+    text-align: center;
+    padding: var(--s-3) var(--s-5);
+    background: rgba(5,5,5,0.7);
+    border: var(--border-blood);
+    border-radius: var(--r-sm);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 24px rgba(139,26,26,0.25);
+  }
+  .stage__level-kicker {
+    font-family: var(--font-display);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: var(--ls-hero);
+    text-transform: uppercase;
+    color: var(--blood-hot);
+    text-shadow: 0 0 12px rgba(255,58,58,0.6);
+  }
+  .stage__level-name {
+    font-family: var(--font-display);
+    font-size: var(--fs-lg);
+    font-weight: 900;
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--bone);
+    margin-top: 2px;
+  }
+
+  /* ── The canvas stage itself ── */
+  .stage__canvas {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 40%, #1a0808 0%, #050505 70%);
+  }
+  .stage__canvas canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Grid overlay for the empty stage */
+  .stage__canvas::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(139,26,26,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139,26,26,0.08) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
+    pointer-events: none;
+  }
+
+  /* Scanlines */
+  .stage__canvas::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 3px,
+      rgba(139,26,26,0.05) 4px
+    );
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  /* Center message */
+  .stage__center {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .stage__center-inner {
+    text-align: center;
+    padding: var(--s-8);
+    max-width: 640px;
+  }
+  .stage__center-title {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 900;
+    letter-spacing: var(--ls-hero);
+    text-transform: uppercase;
+    background: linear-gradient(180deg, var(--bone), var(--blood));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: var(--s-4);
+    filter: drop-shadow(0 0 40px rgba(255,58,58,0.35));
+  }
+  .stage__center-sub {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    letter-spacing: var(--ls-wide);
+    color: var(--ash);
+    text-transform: uppercase;
+    margin-bottom: var(--s-3);
+  }
+  .stage__center-note {
+    font-size: var(--fs-sm);
+    color: var(--bone-dim);
+    line-height: 1.7;
+    margin-top: var(--s-6);
+  }
+
+  /* ── HUD chrome (placeholder bars, actual game draws these later) ── */
+  .hud {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+    font-variant-numeric: tabular-nums;
+  }
+  .hud > * { pointer-events: auto; }
+
+  /* Health + focus bars, bottom-left */
+  .hud__vitals {
+    position: absolute;
+    bottom: var(--s-6);
+    left: var(--s-6);
+    width: 280px;
+    pointer-events: none;
+  }
+  .hud__bar {
+    margin-bottom: var(--s-3);
+  }
+  .hud__bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-display);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--ash);
+    margin-bottom: 4px;
+  }
+  .hud__bar-outer {
+    height: 14px;
+    background: rgba(5,5,5,0.75);
+    border: var(--border-iron);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+    transform: skewX(-12deg);
+  }
+  .hud__bar-outer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.18), transparent 55%);
+    pointer-events: none;
+  }
+  .hud__bar-inner {
+    height: 100%;
+    transition: width var(--dur-base) var(--ease-out);
+    border-radius: 2px;
+  }
+  .hud__bar-inner--hp {
+    background: linear-gradient(90deg, #d11a35, #ff5a5a);
+    box-shadow: 0 0 18px rgba(255,58,58,0.55);
+    width: 100%;
+  }
+  .hud__bar-inner--focus {
+    background: linear-gradient(90deg, #8b1a1a, #ff8a5b);
+    box-shadow: 0 0 18px rgba(255,138,91,0.4);
+    width: 0%;
+  }
+
+  /* Ammo / weapon name, bottom-center */
+  .hud__weapon {
+    position: absolute;
+    bottom: var(--s-6);
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    pointer-events: none;
+  }
+  .hud__weapon-name {
+    font-family: var(--font-display);
+    font-size: var(--fs-sm);
+    font-weight: 900;
+    letter-spacing: var(--ls-hero);
+    text-transform: uppercase;
+    color: var(--bone);
+    text-shadow: 0 0 20px rgba(255,58,58,0.4);
+  }
+  .hud__weapon-ammo {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    letter-spacing: var(--ls-tight);
+    color: var(--blood-hot);
+    margin-top: 4px;
+  }
+
+  /* Minimap, bottom-right */
+  .hud__minimap {
+    position: absolute;
+    bottom: var(--s-6);
+    right: var(--s-6);
+    width: 160px;
+    height: 160px;
+    background: rgba(5,5,5,0.7);
+    border: var(--border-iron);
+    border-radius: var(--r-sm);
+    backdrop-filter: blur(10px);
+    position: absolute;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .hud__minimap canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .hud__minimap-label {
+    position: absolute;
+    bottom: 4px;
+    left: 0; right: 0;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: var(--ls-wide);
+    color: var(--ash);
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  /* Top-right: score, timer */
+  .hud__score {
+    position: absolute;
+    top: var(--s-16);
+    right: var(--s-6);
+    text-align: right;
+    pointer-events: none;
+  }
+  .hud__score-value {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: var(--ls-tight);
+    background: linear-gradient(180deg, var(--bone), var(--blood));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 20px rgba(255,58,58,0.4));
+  }
+  .hud__score-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: var(--ls-wide);
+    color: var(--ash);
+    text-transform: uppercase;
+  }
+  .hud__timer {
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    letter-spacing: var(--ls-tight);
+    color: var(--bone-dim);
+    margin-top: 4px;
+  }
+
+  @media (max-width: 720px) {
+    .hud__vitals { width: 200px; bottom: var(--s-4); left: var(--s-4); }
+    .hud__minimap { width: 110px; height: 110px; bottom: var(--s-4); right: var(--s-4); }
+    .hud__weapon { bottom: var(--s-4); }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- Canvas stage -->
+  <div class="stage__canvas">
+    <canvas id="gameCanvas"></canvas>
+  </div>
+
+  <!-- Top strip: back + level -->
+  <div class="stage__top">
+    <a class="stage__back" href="app.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12 H5 M12 19 l-7-7 7-7"/>
+      </svg>
+      Return to Safehouse
+    </a>
+
+    <div class="stage__level">
+      <div class="stage__level-kicker">Mission</div>
+      <div class="stage__level-name" id="stageLevel">Predator 01</div>
+    </div>
+
+    <div style="width:180px"></div> <!-- spacer to balance -->
+  </div>
+
+  <!-- Center: opening message -->
+  <div class="stage__center">
+    <div class="stage__center-inner">
+      <div class="stage__center-sub">Deploying operator</div>
+      <div class="stage__center-title">Predator 01</div>
+      <div class="stage__center-sub" id="stageOperator">OPERATOR</div>
+      <div class="stage__center-note">
+        The game canvas and live gameplay ship in Layer 8.
+        For now this stage confirms the safehouse → mission transition works,
+        and the HUD chrome below is the layout your run will use.
+      </div>
+    </div>
+  </div>
+
+  <!-- HUD chrome -->
+  <div class="hud">
+
+    <div class="hud__vitals">
+      <div class="hud__bar">
+        <div class="hud__bar-label"><span>Health</span><span id="hudHpText">260/260</span></div>
+        <div class="hud__bar-outer"><div class="hud__bar-inner hud__bar-inner--hp" id="hudHpBar"></div></div>
+      </div>
+      <div class="hud__bar">
+        <div class="hud__bar-label"><span>Focus</span><span id="hudFocusText">0/100</span></div>
+        <div class="hud__bar-outer"><div class="hud__bar-inner hud__bar-inner--focus" id="hudFocusBar"></div></div>
+      </div>
+    </div>
+
+    <div class="hud__weapon">
+      <div class="hud__weapon-name" id="hudWeaponName">Kinetic Rifle</div>
+      <div class="hud__weapon-ammo" id="hudWeaponAmmo">Focus · Free</div>
+    </div>
+
+    <div class="hud__minimap">
+      <canvas id="hudMinimap" width="160" height="160"></canvas>
+      <div class="hud__minimap-label">Sector Scan</div>
+    </div>
+
+    <div class="hud__score">
+      <div class="hud__score-value" id="hudScore">0</div>
+      <div class="hud__score-label">Score</div>
+      <div class="hud__timer" id="hudTimer">00:00</div>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="js/core.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/session.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

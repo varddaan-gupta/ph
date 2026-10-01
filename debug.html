@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Auth Debug — Predators Horizon</title>
+<style>
+  body {
+    background: #050505;
+    color: #e8e4dc;
+    font-family: 'Consolas', 'Monaco', monospace;
+    padding: 24px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  h1 {
+    color: #ff3a3a;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+  }
+  .section {
+    background: #0f0f10;
+    border: 1px solid #2a2422;
+    border-left: 3px solid #ff3a3a;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+  }
+  .section h2 {
+    font-size: 13px;
+    color: #ff5a5a;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .pass { color: #4ade80; }
+  .fail { color: #ff3a3a; }
+  .warn { color: #fbbf24; }
+  .dim  { color: #6b6b73; }
+  pre {
+    background: #050505;
+    padding: 10px;
+    border-radius: 3px;
+    color: #b8b2a8;
+    font-size: 12px;
+    overflow-x: auto;
+  }
+  button {
+    background: #8b1a1a;
+    color: #fff;
+    border: 1px solid #ff3a3a;
+    padding: 10px 20px;
+    font-family: inherit;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
+  button:hover { background: #ff3a3a; }
+  input {
+    background: #050505;
+    border: 1px solid #2a2422;
+    color: #e8e4dc;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    border-radius: 3px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    width: 200px;
+  }
+</style>
+</head>
+<body>
+
+<h1>PREDATORS HORIZON — AUTH DIAGNOSTIC</h1>
+<p class="dim">This page tests the auth flow in isolation. No external files.</p>
+
+<div class="section">
+  <h2>1. Environment</h2>
+  <div id="envOut"></div>
+</div>
+
+<div class="section">
+  <h2>2. Storage Test</h2>
+  <div id="storageOut"></div>
+</div>
+
+<div class="section">
+  <h2>3. Operator Lifecycle Test</h2>
+  <div id="lifecycleOut"></div>
+  <div style="margin-top:12px">
+    <input id="testName" placeholder="TEST-OPERATOR" value="TEST-1">
+    <button onclick="runLifecycle()">Run Test</button>
+    <button onclick="wipeTest()">Wipe Test Data</button>
+  </div>
+</div>
+
+<div class="section">
+  <h2>4. Full Auth Flow Simulator</h2>
+  <p class="dim">This simulates exactly what the real login page does. If this works, the logic is correct and the problem is that your real page's JS files aren't loading.</p>
+  <div id="flowOut"></div>
+  <div style="margin-top:12px">
+    <input id="flowName" placeholder="CALLSIGN" value="SIM-1">
+    <input id="flowPin" type="password" placeholder="PIN (optional)" style="width:120px">
+    <div style="margin-top:8px">
+      <button onclick="simulateSignUp()">Simulate Sign Up</button>
+      <button onclick="simulateSignIn()">Simulate Sign In</button>
+      <button onclick="simulateGuest()">Simulate Guest</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   SELF-CONTAINED AUTH TEST
+   This duplicates the essential logic of core.js + storage.js +
+   session.js into one file so we can isolate whether the LOGIC
+   works, separately from whether the FILES load.
+   ═══════════════════════════════════════════════════════════════ */
+
+const KEYS = {
+  SAVE: 'predatorshorizon.save.v1',
+  SESSION: 'predatorshorizon.session.v1'
+};
+
+/* ── Logging helper ── */
+function log(containerId, msg, kind) {
+  const el = document.getElementById(containerId);
+  const cls = kind === 'pass' ? 'pass' : kind === 'fail' ? 'fail' : kind === 'warn' ? 'warn' : 'dim';
+  el.innerHTML += '<div class="' + cls + '">' + msg + '</div>';
+}
+function clearLog(containerId) {
+  document.getElementById(containerId).innerHTML = '';
+}
+
+/* ── Callsign sanitizer (same as PH.format.callsign) ── */
+function cleanCallsign(raw) {
+  return String(raw || '').trim().toUpperCase().replace(/[^A-Z0-9 _-]/g, '').replace(/\s+/g, ' ').slice(0, 14);
+}
+
+/* ── Storage availability test ── */
+function testStorage() {
+  clearLog('storageOut');
+  try {
+    localStorage.setItem('__ph_test__', '1');
+    localStorage.removeItem('__ph_test__');
+    log('storageOut', '✓ localStorage is available and writable', 'pass');
+  } catch (e) {
+    log('storageOut', '✗ localStorage BLOCKED: ' + e.message, 'fail');
+    log('storageOut', '  This alone would break the entire auth flow.', 'warn');
+    return false;
+  }
+  try {
+    const test = { a: 1, b: 'two', c: [3, 4] };
+    localStorage.setItem('__ph_json_test__', JSON.stringify(test));
+    const read = JSON.parse(localStorage.getItem('__ph_json_test__'));
+    localStorage.removeItem('__ph_json_test__');
+    if (read.a === 1 && read.b === 'two' && read.c[2] === undefined && read.c.length === 2) {
+      log('storageOut', '✓ JSON round-trip works', 'pass');
+    } else {
+      log('storageOut', '✗ JSON round-trip corrupted', 'fail');
+    }
+  } catch (e) {
+    log('storageOut', '✗ JSON round-trip failed: ' + e.message, 'fail');
+  }
+  return true;
+}
+
+/* ── Environment info ── */
+function showEnvironment() {
+  clearLog('envOut');
+  log('envOut', 'URL: ' + window.location.href);
+  log('envOut', 'Protocol: ' + window.location.protocol + (window.location.protocol === 'file:' ? '  ← localStorage may be blocked!' : ''), window.location.protocol === 'file:' ? 'warn' : 'dim');
+  log('envOut', 'Origin: ' + (window.location.origin || 'null'));
+  log('envOut', 'User agent: ' + navigator.userAgent);
+  log('envOut', 'IndexedDB: ' + (typeof indexedDB !== 'undefined' ? 'available' : 'not available'), typeof indexedDB !== 'undefined' ? 'pass' : 'warn');
+}
+
+/* ── Operator lifecycle test ── */
+function runLifecycle() {
+  clearLog('lifecycleOut');
+  const rawName = document.getElementById('testName').value;
+  const name = cleanCallsign(rawName);
+  log('lifecycleOut', 'Testing with callsign: "' + name + '"');
+
+  /* Step 1: load save */
+  let save;
+  try {
+    const raw = localStorage.getItem(KEYS.SAVE);
+    save = raw ? JSON.parse(raw) : { schema: 1, operators: {}, lastOperator: null };
+    log('lifecycleOut', '✓ Loaded save (' + Object.keys(save.operators).length + ' existing operators)', 'pass');
+  } catch (e) {
+    log('lifecycleOut', '✗ Could not load save: ' + e.message, 'fail');
+    return;
+  }
+
+  /* Step 2: check for duplicate */
+  if (save.operators[name]) {
+    log('lifecycleOut', '⚠ Operator "' + name + '" already exists in save', 'warn');
+    log('lifecycleOut', '  Data: ' + JSON.stringify(save.operators[name]).slice(0, 100) + '...', 'dim');
+    return;
+  }
+
+  /* Step 3: create */
+  const op = {
+    schema: 1,
+    id: 'test_' + Date.now().toString(36),
+    name: name,
+    pin: '',
+    guest: false,
+    created: Date.now(),
+    lastSeen: Date.now(),
+    xp: 0,
+    credits: 750,
+    unlockedWeapons: [0],
+    unlockedSkins: [0],
+    unlockedTerrains: [0],
+    loadout: { weapons: [0], skin: 0, terrain: 0 }
+  };
+  save.operators[name] = op;
+  save.lastOperator = name;
+
+  try {
+    localStorage.setItem(KEYS.SAVE, JSON.stringify(save));
+    log('lifecycleOut', '✓ Operator created and saved', 'pass');
+  } catch (e) {
+    log('lifecycleOut', '✗ Failed to write operator: ' + e.message, 'fail');
+    return;
+  }
+
+  /* Step 4: verify by reading back */
+  try {
+    const reread = JSON.parse(localStorage.getItem(KEYS.SAVE));
+    if (reread.operators[name]) {
+      log('lifecycleOut', '✓ Verified: operator persists on re-read', 'pass');
+    } else {
+      log('lifecycleOut', '✗ Operator did NOT persist', 'fail');
+    }
+  } catch (e) {
+    log('lifecycleOut', '✗ Read-back failed: ' + e.message, 'fail');
+  }
+
+  /* Step 5: session write */
+  const session = { name: name, started: Date.now(), lastActive: Date.now(), guest: false };
+  try {
+    localStorage.setItem(KEYS.SESSION, JSON.stringify(session));
+    log('lifecycleOut', '✓ Session written', 'pass');
+  } catch (e) {
+    log('lifecycleOut', '✗ Session write failed: ' + e.message, 'fail');
+  }
+}
+
+function wipeTest() {
+  clearLog('lifecycleOut');
+  try {
+    localStorage.removeItem(KEYS.SAVE);
+    localStorage.removeItem(KEYS.SESSION);
+    log('lifecycleOut', '✓ Save and session cleared', 'pass');
+    log('lifecycleOut', '  Refresh the page to start fresh.', 'dim');
+  } catch (e) {
+    log('lifecycleOut', '✗ Wipe failed: ' + e.message, 'fail');
+  }
+}
+
+/* ── Full flow simulator (this is what the real login page does) ── */
+function simulateSignUp() {
+  clearLog('flowOut');
+  const name = cleanCallsign(document.getElementById('flowName').value);
+  const pin = document.getElementById('flowPin').value;
+  log('flowOut', '→ Simulating: signUp("' + name + '", "' + pin + '")');
+
+  if (name.length < 2) { log('flowOut', '✗ Callsign too short', 'fail'); return; }
+
+  let save;
+  try {
+    save = JSON.parse(localStorage.getItem(KEYS.SAVE) || '{"schema":1,"operators":{}}');
+  } catch (e) { log('flowOut', '✗ Save corrupt', 'fail'); return; }
+
+  if (save.operators[name]) { log('flowOut', '✗ Callsign already taken', 'fail'); return; }
+
+  const op = {
+    schema: 1, id: 'op_' + Date.now().toString(36), name: name, pin: pin,
+    guest: false, created: Date.now(), lastSeen: Date.now(),
+    xp: 0, credits: 750,
+    unlockedWeapons: [0], unlockedSkins: [0], unlockedTerrains: [0],
+    loadout: { weapons: [0], skin: 0, terrain: 0 }
+  };
+  save.operators[name] = op;
+  save.lastOperator = name;
+  localStorage.setItem(KEYS.SAVE, JSON.stringify(save));
+  log('flowOut', '✓ Operator record written to localStorage', 'pass');
+
+  const session = { name: name, started: Date.now(), lastActive: Date.now(), guest: false };
+  localStorage.setItem(KEYS.SESSION, JSON.stringify(session));
+  log('flowOut', '✓ Session record written to localStorage', 'pass');
+
+  log('flowOut', '→ If the real login page reached this point, it would now call:', 'dim');
+  log('flowOut', '   window.location.href = "app.html"', 'dim');
+  log('flowOut', '✓ SIMULATION PASSED — auth logic works', 'pass');
+  log('flowOut', '  If this simulation works but the real login page does nothing, the real page is failing to load its JS files.', 'warn');
+}
+
+function simulateSignIn() {
+  clearLog('flowOut');
+  const name = cleanCallsign(document.getElementById('flowName').value);
+  const pin = document.getElementById('flowPin').value;
+  log('flowOut', '→ Simulating: signIn("' + name + '", "' + pin + '")');
+
+  let save;
+  try {
+    save = JSON.parse(localStorage.getItem(KEYS.SAVE) || '{"schema":1,"operators":{}}');
+  } catch (e) { log('flowOut', '✗ Save corrupt', 'fail'); return; }
+
+  const op = save.operators[name];
+  if (!op) { log('flowOut', '✗ No operator named "' + name + '"', 'fail'); return; }
+  if (op.pin && op.pin !== pin) { log('flowOut', '✗ Wrong PIN', 'fail'); return; }
+
+  const session = { name: name, started: Date.now(), lastActive: Date.now(), guest: !!op.guest };
+  localStorage.setItem(KEYS.SESSION, JSON.stringify(session));
+  log('flowOut', '✓ Session written', 'pass');
+  log('flowOut', '✓ SIMULATION PASSED — sign-in logic works', 'pass');
+}
+
+function simulateGuest() {
+  clearLog('flowOut');
+  log('flowOut', '→ Simulating: continueAsGuest()');
+
+  const hex = '0123456789ABCDEF';
+  let tag = '';
+  for (let i = 0; i < 4; i++) tag += hex[Math.floor(Math.random() * 16)];
+  const name = 'OPERATOR-' + tag;
+
+  let save;
+  try {
+    save = JSON.parse(localStorage.getItem(KEYS.SAVE) || '{"schema":1,"operators":{}}');
+  } catch (e) { log('flowOut', '✗ Save corrupt', 'fail'); return; }
+
+  const op = {
+    schema: 1, id: 'op_' + Date.now().toString(36), name: name, pin: '',
+    guest: true, created: Date.now(), lastSeen: Date.now(),
+    xp: 0, credits: 750,
+    unlockedWeapons: [0], unlockedSkins: [0], unlockedTerrains: [0],
+    loadout: { weapons: [0], skin: 0, terrain: 0 }
+  };
+  save.operators[name] = op;
+  save.lastOperator = name;
+  localStorage.setItem(KEYS.SAVE, JSON.stringify(save));
+  localStorage.setItem(KEYS.SESSION, JSON.stringify({ name: name, started: Date.now(), lastActive: Date.now(), guest: true }));
+  log('flowOut', '✓ Guest operator "' + name + '" created', 'pass');
+  log('flowOut', '✓ Session written', 'pass');
+  log('flowOut', '✓ SIMULATION PASSED — guest flow works', 'pass');
+}
+
+/* ── Run on load ── */
+showEnvironment();
+testStorage();
+</script>
+</body>
+</html>

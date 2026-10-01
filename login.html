@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Sign In — Predators Horizon</title>
+<meta name="theme-color" content="#050505">
+<link rel="icon" type="image/svg+xml" href="assets/logo/logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+<div class="auth">
+
+  <!-- ═══════════ LEFT: Art ═══════════ -->
+  <aside class="auth__art">
+    <div class="auth__art-inner">
+      <img class="auth__art-banner" src="assets/logo/logo2.svg" alt="Predators Horizon">
+      <div class="auth__art-copy">— Identity Layer · Operator Clearance —</div>
+      <p class="auth__art-quote">
+        The horizon doesn't wait.<br>
+        Sign in, operator. The swarm is already moving.
+      </p>
+    </div>
+  </aside>
+
+  <!-- ═══════════ RIGHT: Form ═══════════ -->
+  <main class="auth__form-wrap">
+    <form class="auth__form" id="authForm" autocomplete="on" novalidate>
+
+      <a class="auth__back" href="index.html">← Back to Site</a>
+
+      <div class="auth__brand">
+        <img src="assets/logo/logo.svg" alt="">
+        <span class="auth__brand-text">Predators Horizon</span>
+      </div>
+
+      <!-- Tabs -->
+      <div class="auth__tabs" role="tablist">
+        <button type="button" class="auth__tab is-active" data-tab="signin" role="tab">Sign In</button>
+        <button type="button" class="auth__tab" data-tab="signup" role="tab">New Operator</button>
+      </div>
+
+      <!-- ── Sign In pane ── -->
+      <section class="auth__pane is-active" data-pane="signin">
+        <div class="auth__field auth__users">
+          <label class="ph-label" for="signinUser">Callsign</label>
+          <input class="ph-input" id="signinUser" type="text" name="username"
+                 autocomplete="username" placeholder="YOUR CALLSIGN" maxlength="14" required>
+          <div class="auth__users-list" id="usersList"></div>
+        </div>
+
+        <div class="auth__field">
+          <label class="ph-label" for="signinPin">Access Code</label>
+          <input class="ph-input" id="signinPin" type="password" name="current-password"
+                 autocomplete="current-password" placeholder="••••••" maxlength="8">
+          <div class="auth__hint">Leave blank if this operator has no access code.</div>
+        </div>
+
+        <div class="auth__error" id="signinError" role="alert"></div>
+
+        <button type="submit" class="ph-btn ph-btn--primary ph-btn--block ph-btn--lg auth__submit" data-submit="signin">
+          Enter Predators Horizon
+        </button>
+      </section>
+
+      <!-- ── Sign Up pane ── -->
+      <section class="auth__pane" data-pane="signup">
+        <div class="auth__field">
+          <label class="ph-label" for="signupUser">Choose a Callsign</label>
+          <input class="ph-input" id="signupUser" type="text" name="new-username"
+                 autocomplete="username" placeholder="E.G. NOVA-7" maxlength="14" required>
+          <div class="auth__hint">2–14 characters. Letters, numbers, spaces, dash, underscore.</div>
+        </div>
+
+        <div class="auth__field">
+          <label class="ph-label" for="signupPin">Access Code <span style="color:var(--ash)">(optional)</span></label>
+          <input class="ph-input" id="signupPin" type="password" name="new-password"
+                 autocomplete="new-password" placeholder="••••••" maxlength="8">
+          <div class="auth__hint">If set, you'll need it to sign back in on another browser.</div>
+        </div>
+
+        <div class="auth__error" id="signupError" role="alert"></div>
+
+        <button type="submit" class="ph-btn ph-btn--primary ph-btn--block ph-btn--lg auth__submit" data-submit="signup">
+          Create Operator
+        </button>
+      </section>
+
+      <!-- ── Guest (always visible) ── -->
+      <div class="auth__divider">or</div>
+
+      <button type="button" class="ph-btn ph-btn--ghost ph-btn--block auth__guest" id="guestBtn">
+        Continue as Guest
+      </button>
+      <div class="auth__hint" style="text-align:center;margin-top:var(--s-2)">
+        Guest operators are stored locally. You can claim them later.
+      </div>
+
+      <div class="auth__footer">
+        <p>Predators Horizon · v0.1</p>
+      </div>
+
+    </form>
+  </main>
+
+</div>
+
+<script src="js/core.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/session.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
